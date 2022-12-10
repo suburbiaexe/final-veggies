@@ -32,7 +32,15 @@ add_executable(${PROJECT_NAME}
     src/settings.cpp
     src/utils/scenefilereader.cpp
     src/utils/sceneparser.cpp
+    src/camera/camera.cpp
+    src/shapes/sphere.cpp
+    src/shapes/cube.cpp
+    src/shapes/cone.cpp
+    src/shapes/cylinder.cpp
+    src/shapes/triangle.cpp
+    src/pipeline.cpp
 
+    src/shapes/sphere.cpp
     src/mainwindow.h
     src/realtime.h
     src/settings.h
@@ -40,6 +48,12 @@ add_executable(${PROJECT_NAME}
     src/utils/scenefilereader.h
     src/utils/sceneparser.h
     src/utils/shaderloader.h
+    src/camera/camera.h
+    src/shapes/sphere.h
+    src/shapes/cube.h
+    src/shapes/cone.h
+    src/shapes/cylinder.h
+    src/shapes/triangle.h
 )
 
 # GLM: this creates its library and allows you to `#include "glm/..."`
@@ -66,6 +80,9 @@ qt6_add_resources(${PROJECT_NAME} "Resources"
     FILES
         resources/shaders/default.frag
         resources/shaders/default.vert
+        resources/shaders/color.frag
+        resources/shaders/postpass.frag
+        resources/shaders/postpass.vert
 )
 
 # GLEW: this provides support for Windows (including 64-bit)
