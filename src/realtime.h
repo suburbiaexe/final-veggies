@@ -13,6 +13,15 @@
 #include <QTime>
 #include <QTimer>
 
+#include "utils/shaderloader.h"
+#include "utils/sceneparser.h"
+#include "camera/camera.h"
+
+#include "shapes/cone.h"
+#include "shapes/cube.h"
+#include "shapes/cylinder.h"
+#include "shapes/sphere.h"
+
 class Realtime : public QOpenGLWidget
 {
 public:
@@ -48,4 +57,64 @@ private:
 
     // Device Correction Variables
     int m_devicePixelRatio;
+
+    GLuint phongProgram;     // Stores id of shader program
+    GLuint colorProgram;
+    GLuint postpassProgram;
+
+
+    Camera cam;
+    RenderData metaData;
+
+    Cone cone;
+    Sphere sphere;
+    Cube cube;
+    Cylinder cylinder;
+
+    // shape vbos
+    GLuint m_sphere_vbo; // Stores id of vbo
+    GLuint m_cube_vbo; // Stores id of vbo
+    GLuint m_cylinder_vbo; // Stores id of vbo
+    GLuint m_cone_vbo; // Stores id of vbo
+
+    // shape vaos
+    GLuint m_cone_vao; // Stores id of vao
+    GLuint m_cylinder_vao; // Stores id of vao
+    GLuint m_sphere_vao; // Stores id of vao
+    GLuint m_cube_vao; // Stores id of vao
+
+    // sizes of shape data
+    float sphereDataSize;
+    float coneDataSize;
+    float cylinderDataSize;
+    float cubeDataSize;
+
+    // shape data
+    std::vector<GLfloat> m_sphereData;
+    std::vector<GLfloat> m_cubeData;
+    std::vector<GLfloat> m_coneData;
+    std::vector<GLfloat> m_cylinderData;
+
+
+    void makeFBO();
+    void generateShapeData();
+    void initializeBuffers();
+    void bindVBO();
+    void bindVAO();
+    void bindDraw(PrimitiveType type);
+
+    int m_fbo_width;
+    int m_fbo_height;
+    int m_screen_width;
+    int m_screen_height;
+
+
+    GLuint m_fbo;
+    GLuint m_fbo_texture; // occlusion texture
+    GLuint m_fbo_renderbuffer;
+    GLuint m_defaultFBO;
+
+    void paintGeometry(int pass);
+    void paintSun();
+
 };
