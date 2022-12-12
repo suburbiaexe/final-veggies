@@ -98,20 +98,37 @@ void Realtime::initializeGL() {
          1.0f, 0.0f, 0.0f // br uv
     };
 
+//    // messing w stuff
 //    std::vector<GLfloat> fullscreen_quad_data =
 //    { //     POSITIONS    //
-//        -10.0f,  10.0f, 0.0f,
-//         0.0f, 10.0f, 0.0f, // tl uv
-//        -10.0f, -10.0f, 0.0f,
+//        -1.0f,  -1.0f, 0.0f,
+//         0.0f, -1.0f, 0.0f, // tl uv
+//        -1.0f, -1.0f, 0.0f,
 //         0.0f, 0.0f, 0.0f, // bl uv
-//         10.0f, -10.0f, 0.0f,
-//         10.0f, 0.0f, 0.0f, // br uv
-//         10.0f,  10.0f, 0.0f,
-//         10.0f, 10.0f, 0.0f, // tr uv
-//        -10.0f,  10.0f, 0.0f,
-//         0.0f, 10.0f, 0.0f, // tr uv
-//         10.0f, -10.0f, 0.0f,
-//         10.0f, 0.0f, 0.0f // br uv
+//         1.0f, -1.0f, 0.0f,
+//         -1.0f, 0.0f, 0.0f, // br uv
+//         1.0f,  1.0f, 0.0f,
+//         1.0f, -1.0f, 0.0f, // tr uv
+//        -1.0f,  1.0f, 0.0f,
+//         0.0f, -1.0f, 0.0f, // tr uv
+//         1.0f, -1.0f, 0.0f,
+//         -1.0f, 0.0f, 0.0f // br uv
+//    };
+
+//    std::vector<GLfloat> fullscreen_quad_data =
+//    { //     POSITIONS    //
+//        (float) -m_screen_width,  (float) m_screen_height, 0.0f,
+//         0.0f, (float) m_screen_height, 0.0f, // tl uv
+//        (float) -m_screen_width, (float) -m_screen_height, 0.0f,
+//         0.0f, 0.0f, 0.0f, // bl uv
+//         (float) m_screen_width, (float) -m_screen_height, 0.0f,
+//         (float) m_screen_width, 0.0f, 0.0f, // br uv
+//         (float) m_screen_width,  (float) m_screen_height, 0.0f,
+//         (float) m_screen_width, (float) m_screen_height, 0.0f, // tr uv
+//        (float) -m_screen_width,  (float) m_screen_height, 0.0f,
+//         0.0f, (float) m_screen_height, 0.0f, // tr uv
+//         (float) m_screen_width, (float) -m_screen_height, 0.0f,
+//         (float) m_screen_width, 0.0f, 0.0f // br uv
 //    };
 
     glGenBuffers(1, &m_fullscreen_vbo);
@@ -318,7 +335,6 @@ void Realtime::paintGL() {
     glUseProgram(postpassProgram);
 
     glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0);
-//    glm::vec4 sunPos = glm::vec4(-0.958, 0.28, 0.0, 1.0);
     glm::vec4 sunPos = glm::vec4(0, 0, -10, 1.0);
     sunPos = sunPos * cam.viewMat;
     sunPos = sunPos * cam.projMat;
@@ -326,10 +342,8 @@ void Realtime::paintGL() {
     sunPos = sunPos + glm::vec4(1.0, 1.0, 0.0, 0.0);
     sunPos = sunPos * 0.5f;
     glm::vec2 sun = glm::vec2(sunPos[0], sunPos[1]);
-//    std::cout << sunPos[0] << " " << sunPos[1] << std::endl;
 
     glUniform2fv(glGetUniformLocation(postpassProgram, "sunPos"), 1, &sun[0]);
-//    std::cout << sun[0] << " " << sun[1] << std::endl;
 
     glBindVertexArray(m_fullscreen_vao);
     glActiveTexture(GL_TEXTURE0);
@@ -341,19 +355,6 @@ void Realtime::paintGL() {
     glUseProgram(0);
     glDisable(GL_BLEND);
 }
-
-/*
-What needs to happen:
-Currently the sun is not moving when I move the camera
-I need the sun to move with the camera aka stay in the same place on the screen
-
-Currently: render pass to render sun and occluding objects, render pass to draw
-
-multiply sun position
-
-
-
-*/
 
 void Realtime::resizeGL(int w, int h) {
     // Tells OpenGL how big the screen is
