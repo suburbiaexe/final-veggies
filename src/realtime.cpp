@@ -4,8 +4,6 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <iostream>
-//#include "glm/ext/matrix_clip_space.hpp"
-//#include "glm/ext/matrix_transform.hpp"
 #include "settings.h"
 #include "glm/gtx/transform.hpp"
 
@@ -83,11 +81,55 @@ void Realtime::initializeGL() {
     bindVBO();
     bindVAO();
     makeFBO();
+
+    std::vector<GLfloat> fullscreen_quad_data =
+    { //     POSITIONS    //
+        -1.0f,  1.0f, 0.0f,
+         0.0f, 1.0f, 0.0f, // tl uv
+        -1.0f, -1.0f, 0.0f,
+         0.0f, 0.0f, 0.0f, // bl uv
+         1.0f, -1.0f, 0.0f,
+         1.0f, 0.0f, 0.0f, // br uv
+         1.0f,  1.0f, 0.0f,
+         1.0f, 1.0f, 0.0f, // tr uv
+        -1.0f,  1.0f, 0.0f,
+         0.0f, 1.0f, 0.0f, // tr uv
+         1.0f, -1.0f, 0.0f,
+         1.0f, 0.0f, 0.0f // br uv
+    };
+
+//    std::vector<GLfloat> fullscreen_quad_data =
+//    { //     POSITIONS    //
+//        -10.0f,  10.0f, 0.0f,
+//         0.0f, 10.0f, 0.0f, // tl uv
+//        -10.0f, -10.0f, 0.0f,
+//         0.0f, 0.0f, 0.0f, // bl uv
+//         10.0f, -10.0f, 0.0f,
+//         10.0f, 0.0f, 0.0f, // br uv
+//         10.0f,  10.0f, 0.0f,
+//         10.0f, 10.0f, 0.0f, // tr uv
+//        -10.0f,  10.0f, 0.0f,
+//         0.0f, 10.0f, 0.0f, // tr uv
+//         10.0f, -10.0f, 0.0f,
+//         10.0f, 0.0f, 0.0f // br uv
+//    };
+
+    glGenBuffers(1, &m_fullscreen_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, m_fullscreen_vbo);
+    glBufferData(GL_ARRAY_BUFFER, fullscreen_quad_data.size() * sizeof(GLfloat), fullscreen_quad_data.data(), GL_STATIC_DRAW);
+    glGenVertexArrays(1, &m_fullscreen_vao);
+    glBindVertexArray(m_fullscreen_vao);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<void*>(0));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<void*>(3 * sizeof(GLfloat)));
+
 }
 
 void Realtime::makeFBO() {
     glGenTextures(1, &m_fbo_texture);
-    glActiveTexture(GL_TEXTURE1);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
                  m_fbo_width, m_fbo_height, 0,
@@ -132,6 +174,7 @@ void Realtime::paintGeometry(int pass) {
             glUniformMatrix4fv(glGetUniformLocation(colorProgram, "modelmat"), 1, GL_FALSE, &ctm[0][0]);
             glUniformMatrix4fv(glGetUniformLocation(colorProgram, "viewmat"), 1, GL_FALSE, &viewMat[0][0]);
             glUniformMatrix4fv(glGetUniformLocation(colorProgram, "projmat"), 1, GL_FALSE, &projMat[0][0]);
+            glUniform1f(glGetUniformLocation(colorProgram, "sun"), 0.0);
 
             glUniform1f(glGetUniformLocation(colorProgram, "color"), 0.0);
             PrimitiveType type = shape.primitive.type;
@@ -198,6 +241,7 @@ void Realtime::paintGeometry(int pass) {
             glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &ctm[0][0]);
             glUniformMatrix4fv(glGetUniformLocation(phongProgram, "viewmat"), 1, GL_FALSE, &viewMat[0][0]);
             glUniformMatrix4fv(glGetUniformLocation(phongProgram, "projmat"), 1, GL_FALSE, &projMat[0][0]);
+            glUniform1f(glGetUniformLocation(colorProgram, "sun"), 0.0);
             SceneMaterial mat = shape.primitive.material;
             glUniform4fv(glGetUniformLocation(phongProgram, "cambient"), 1, &mat.cAmbient[0]);
             glUniform4fv(glGetUniformLocation(phongProgram, "cdiffuse"), 1, &mat.cDiffuse[0]);
@@ -209,43 +253,41 @@ void Realtime::paintGeometry(int pass) {
         }
 
     }
-
-    // bind geometry texture
-
-
-
-
     glBindVertexArray(0);
     glUseProgram(0);
 }
 
 void Realtime::paintSun() {
-
     glUseProgram(colorProgram);
 
-    // color a white circle - or black if it is covered
-
-    glm::mat4 viewMat = cam.viewMat;
-    glm::mat4 projMat = cam.projMat;
-
+    // when initializing camera, set view and proj mats and then always pass those in, dont get new ones
     glm::mat3 invTransposeModel;
     glm::mat4 ctm = glm::mat4(1.0f);
 
-    glm::vec4 cval = {1,1,1,0};
+    glm::mat4 proj = cam.projMat;
+    glm::mat4 view = cam.viewMat;
 
-    glUniformMatrix4fv(glGetUniformLocation(colorProgram, "viewmat"), 1, GL_FALSE, &viewMat[0][0]);
-    glUniformMatrix4fv(glGetUniformLocation(colorProgram, "projmat"), 1, GL_FALSE, &projMat[0][0]);
-    ctm *= glm::translate(glm::vec3(20,30,-80));
-    ctm *= glm::scale(glm::vec3(7,7,7));
+    glUniformMatrix4fv(glGetUniformLocation(colorProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(colorProgram, "projmat"), 1, GL_FALSE, &proj[0][0]);
+
+    glUniform1f(glGetUniformLocation(colorProgram, "sun"), 1.0);
+    ctm *= glm::translate(glm::vec3(10, 10, -30));
+    ctm *= glm::scale(glm::vec3(6,6,6));
+
+    // change the position where the rays are shot from
+    // how do they get the position for rendering the sun vs shooting the rays in pass 1 vs 3
 
     invTransposeModel = inverse(transpose(glm::mat3(ctm)));
     glUniformMatrix3fv(glGetUniformLocation(colorProgram, "invTransposeModel"), 1, GL_FALSE, &invTransposeModel[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(colorProgram, "modelmat"), 1, GL_FALSE, &ctm[0][0]);
 
-    glUniform1f(glGetUniformLocation(colorProgram, "color"), 1.0); // send color in as white
+    glUniform1f(glGetUniformLocation(colorProgram, "color"), 1.0);
+
+    glDisable(GL_DEPTH_TEST);
 
     bindDraw(PrimitiveType::PRIMITIVE_SPHERE);
 
+    glEnable(GL_DEPTH_TEST);
     glBindVertexArray(0);
     glUseProgram(0);
 }
@@ -253,22 +295,65 @@ void Realtime::paintSun() {
 
 void Realtime::paintGL() {
     // Students: anything requiring OpenGL calls every frame should be done here
+//    glClearColor(0, 135.f/255.f, 242.f/255.f, 0.41);
 
-    // Render pass 1: render
-    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+    //rgba(0, 135, 242, 0.41)
+    // Render pass 1: render sun and occluding shapes to fbo texture
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glViewport(0, 0, m_screen_width, m_screen_height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     paintSun();
     paintGeometry(1);
 
-//    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-//    glViewport(0, 0, m_screen_width, m_screen_height);
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    paintGeometry(0);
+    // Render pass 2: render shapes to default framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+    glViewport(0, 0, m_screen_width, m_screen_height);
+    paintGeometry(0);
 
+    // Render pass 3: render shapes with sun and add rays
+    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+    glViewport(0, 0, m_screen_width, m_screen_height);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glUseProgram(postpassProgram);
 
+    glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0);
+//    glm::vec4 sunPos = glm::vec4(-0.958, 0.28, 0.0, 1.0);
+    glm::vec4 sunPos = glm::vec4(0, 0, -10, 1.0);
+    sunPos = sunPos * cam.viewMat;
+    sunPos = sunPos * cam.projMat;
+//    sunPos = sunPos * (1.f / sunPos[3]);
+    sunPos = sunPos + glm::vec4(1.0, 1.0, 0.0, 0.0);
+    sunPos = sunPos * 0.5f;
+    glm::vec2 sun = glm::vec2(sunPos[0], sunPos[1]);
+//    std::cout << sunPos[0] << " " << sunPos[1] << std::endl;
 
+    glUniform2fv(glGetUniformLocation(postpassProgram, "sunPos"), 1, &sun[0]);
+//    std::cout << sun[0] << " " << sun[1] << std::endl;
+
+    glBindVertexArray(m_fullscreen_vao);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindVertexArray(0);
+    glUseProgram(0);
+    glDisable(GL_BLEND);
 }
+
+/*
+What needs to happen:
+Currently the sun is not moving when I move the camera
+I need the sun to move with the camera aka stay in the same place on the screen
+
+Currently: render pass to render sun and occluding objects, render pass to draw
+
+multiply sun position
+
+
+
+*/
 
 void Realtime::resizeGL(int w, int h) {
     // Tells OpenGL how big the screen is
@@ -289,21 +374,22 @@ void Realtime::resizeGL(int w, int h) {
 }
 
 void Realtime::sceneChanged() {
-
     bool success = SceneParser::parse(settings.sceneFilePath, metaData);
 
     if (!success) {
         std::cerr << "Error loading scene: \"" << settings.sceneFilePath << "\"" << std::endl;
         return;
     }
-    cam.init(metaData.cameraData, size().width(), size().height(), settings.farPlane, settings.nearPlane);
+    cam.init(metaData.cameraData, size().width(), size().height(), 200, settings.nearPlane);
+    initialView = cam.viewMat;
+    initialProj = cam.projMat;
 
     update(); // asks for a PaintGL() call to occur
 }
 
 void Realtime::settingsChanged() {
     makeCurrent();
-    cam.updatePlanes(settings.nearPlane, settings.farPlane);
+    cam.updatePlanes(settings.nearPlane, 200);
     int param1 = settings.shapeParameter1;
     int param2 = settings.shapeParameter2;
 
@@ -350,7 +436,17 @@ void Realtime::mouseMoveEvent(QMouseEvent *event) {
         m_prev_mouse_pos = glm::vec2(posX, posY);
 
         // Use deltaX and deltaY here to rotate
-
+        glm::mat4 view;
+        if (event-> buttons() == Qt::LeftButton) {
+            if (deltaX != 0) {
+                glm::vec3 axis = {0,1,0};
+                view = cam.updateRotation(axis, deltaX * 0.005f);
+            }
+            if (deltaY != 0) {
+                glm::vec3 r = glm::cross(glm::vec3(cam.cdata.look), glm::vec3(cam.cdata.up));
+                view = cam.updateRotation(r, deltaY * 0.005f);
+            }
+        }
         update(); // asks for a PaintGL() call to occur
     }
 }
@@ -361,6 +457,70 @@ void Realtime::timerEvent(QTimerEvent *event) {
     m_elapsedTimer.restart();
 
     // Use deltaTime and m_keyMap here to move around
+    glm::vec4 look = cam.cdata.look;
+    glm::vec4 pos = cam.cdata.pos;
+    glm::vec3 left = glm::normalize(glm::cross(glm::vec3(cam.cdata.up), glm::vec3(cam.cdata.look)));
+    glm::vec4 normalized = glm::normalize(look - pos);
+    if (m_keyMap.at(Qt::Key_W)) {
+        float val0 = (float) normalized[0] * deltaTime;
+        float val1 = (float) normalized[1] * deltaTime;
+        float val2 = (float) normalized[2] * deltaTime;
+        glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                 0, 1, 0, 0,
+                 0, 0, 1, 0,
+                 val0, val1, val2, 1);
+        cam.updateTranslation(translate);
+    }
+    if (m_keyMap.at(Qt::Key_S)) {
+        float val0 = (float) -normalized[0] * deltaTime;
+        float val1 = (float) -normalized[1] * deltaTime;
+        float val2 = (float) -normalized[2] * deltaTime;
+        glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                 0, 1, 0 ,0,
+                 0, 0, 1, 0,
+                 val0, val1, val2, 1);
+        cam.updateTranslation(translate);
+    }
+    if (m_keyMap.at(Qt::Key_A)) {
+        float val0 = (float) left[0] * deltaTime;
+        float val1 = (float) left[1] * deltaTime;
+        float val2 = (float) left[2] * deltaTime;
+        glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                 0, 1, 0 ,0,
+                 0, 0, 1, 0,
+                 val0, val1, val2, 1);
+        cam.updateTranslation(translate);
+    }
+    if (m_keyMap.at(Qt::Key_D)) {
+        float val0 = -(float) left[0] * deltaTime;
+        float val1 = -(float) left[1] * deltaTime;
+        float val2 = -(float) left[2] * deltaTime;
+        glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                 0, 1, 0 ,0,
+                 0, 0, 1, 0,
+                 val0, val1, val2, 1);
+        cam.updateTranslation(translate);
+    }
+    if (m_keyMap.at(Qt::Key_Space)) {
+        float val0 = 0.0f * deltaTime;
+        float val1 = 1.0f * deltaTime;
+        float val2 = 0.0f * deltaTime;
+        glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                 0, 1, 0 ,0,
+                 0, 0, 1, 0,
+                 val0, val1, val2, 1);
+        cam.updateTranslation(translate);
+    }
+//    if (m_keyMap.at(Qt::Key_Control) ) {
+//        float val0 = 0.0f * deltaTime;
+//        float val1 = -1.0f * deltaTime;
+//        float val2 = 0.0f * deltaTime;
+//        glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+//                 0, 1, 0 ,0,
+//                 0, 0, 1, 0,
+//                 val0, val1, val2, 1);
+//        cam.updateTranslation(translate);
+//    }
 
     update(); // asks for a PaintGL() call to occur
 }
