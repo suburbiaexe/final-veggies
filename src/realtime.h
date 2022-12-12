@@ -108,6 +108,9 @@ private:
     int m_screen_width;
     int m_screen_height;
 
+    GLuint m_fullscreen_vbo;
+    GLuint m_fullscreen_vao;
+
 
     GLuint m_fbo;
     GLuint m_fbo_texture; // occlusion texture
@@ -117,4 +120,8 @@ private:
     void paintGeometry(int pass);
     void paintSun();
 
+    glm::mat4 initialView; // sky dome view and proj basically
+    glm::mat4 initialProj;
+
+    bool rotating;
 };
