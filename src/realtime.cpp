@@ -98,38 +98,6 @@ void Realtime::initializeGL() {
          1.0f, 0.0f, 0.0f // br uv
     };
 
-//    // messing w stuff
-//    std::vector<GLfloat> fullscreen_quad_data =
-//    { //     POSITIONS    //
-//        -1.0f,  -1.0f, 0.0f,
-//         0.0f, -1.0f, 0.0f, // tl uv
-//        -1.0f, -1.0f, 0.0f,
-//         0.0f, 0.0f, 0.0f, // bl uv
-//         1.0f, -1.0f, 0.0f,
-//         -1.0f, 0.0f, 0.0f, // br uv
-//         1.0f,  1.0f, 0.0f,
-//         1.0f, -1.0f, 0.0f, // tr uv
-//        -1.0f,  1.0f, 0.0f,
-//         0.0f, -1.0f, 0.0f, // tr uv
-//         1.0f, -1.0f, 0.0f,
-//         -1.0f, 0.0f, 0.0f // br uv
-//    };
-
-//    std::vector<GLfloat> fullscreen_quad_data =
-//    { //     POSITIONS    //
-//        (float) -m_screen_width,  (float) m_screen_height, 0.0f,
-//         0.0f, (float) m_screen_height, 0.0f, // tl uv
-//        (float) -m_screen_width, (float) -m_screen_height, 0.0f,
-//         0.0f, 0.0f, 0.0f, // bl uv
-//         (float) m_screen_width, (float) -m_screen_height, 0.0f,
-//         (float) m_screen_width, 0.0f, 0.0f, // br uv
-//         (float) m_screen_width,  (float) m_screen_height, 0.0f,
-//         (float) m_screen_width, (float) m_screen_height, 0.0f, // tr uv
-//        (float) -m_screen_width,  (float) m_screen_height, 0.0f,
-//         0.0f, (float) m_screen_height, 0.0f, // tr uv
-//         (float) m_screen_width, (float) -m_screen_height, 0.0f,
-//         (float) m_screen_width, 0.0f, 0.0f // br uv
-//    };
 
     glGenBuffers(1, &m_fullscreen_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, m_fullscreen_vbo);
@@ -291,9 +259,6 @@ void Realtime::paintSun() {
     ctm *= glm::translate(glm::vec3(10, 10, -30));
     ctm *= glm::scale(glm::vec3(6,6,6));
 
-    // change the position where the rays are shot from
-    // how do they get the position for rendering the sun vs shooting the rays in pass 1 vs 3
-
     invTransposeModel = inverse(transpose(glm::mat3(ctm)));
     glUniformMatrix3fv(glGetUniformLocation(colorProgram, "invTransposeModel"), 1, GL_FALSE, &invTransposeModel[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(colorProgram, "modelmat"), 1, GL_FALSE, &ctm[0][0]);
@@ -312,9 +277,7 @@ void Realtime::paintSun() {
 
 void Realtime::paintGL() {
     // Students: anything requiring OpenGL calls every frame should be done here
-//    glClearColor(0, 135.f/255.f, 242.f/255.f, 0.41);
 
-    //rgba(0, 135, 242, 0.41)
     // Render pass 1: render sun and occluding shapes to fbo texture
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glViewport(0, 0, m_screen_width, m_screen_height);
