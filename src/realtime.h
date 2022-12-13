@@ -21,6 +21,7 @@
 #include "shapes/cube.h"
 #include "shapes/cylinder.h"
 #include "shapes/sphere.h"
+#include "shapes/terraingenerator.h"
 
 class Realtime : public QOpenGLWidget
 {
@@ -70,6 +71,7 @@ private:
     Sphere sphere;
     Cube cube;
     Cylinder cylinder;
+    TerrainGenerator terrain = TerrainGenerator();
 
     // shape vbos
     GLuint m_sphere_vbo; // Stores id of vbo
@@ -88,6 +90,7 @@ private:
     float coneDataSize;
     float cylinderDataSize;
     float cubeDataSize;
+    float terrainDataSize;
 
     // shape data
     std::vector<GLfloat> m_sphereData;
@@ -124,6 +127,7 @@ private:
     glm::mat4 initialProj;
 
 
+    // sky map stuff
     GLuint sky_vbo;
     GLuint sky_vao;
     GLuint sky_ebo;
@@ -140,10 +144,11 @@ private:
       GLuint* tex_cube);
 
 
+    // terrain
+    GLuint terrain_vbo;
+    GLuint terrain_vao;
+
     // bezier stuff
-
-    bool rotating;
-
     glm::vec4 interp(glm::vec4 a, glm::vec4 b, float t);
     void bezier();
     void run_bezier();
