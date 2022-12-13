@@ -138,4 +138,16 @@ private:
       const char* right,
       GLuint* tex_cube);
 
+
+    // bezier stuff
+    glm::vec4 interp(glm::vec4 a, glm::vec4 b, float t);
+    void bezier();
+    void run_bezier();
+
+    glm::vec4 bezA;
+    glm::vec4 bezB;
+    glm::vec4 bezC;
+    glm::vec4 bezD;
+    float bezT;
+    bool bezFlag;
 };

@@ -20,6 +20,11 @@ void Camera::updateTranslation(glm::mat4 translationmat) {
     viewMat = getViewMatrix();
 }
 
+void Camera::updatePosAndView(glm::vec4 p) {
+    cdata.pos = p;
+    viewMat = getViewMatrix();
+}
+
 glm::mat4 Camera::updateRotation(glm::vec3 axis, float angle) {
     float cosval = cos(angle);
     float sinval = sin(angle);
