@@ -581,7 +581,6 @@ void Realtime::mouseMoveEvent(QMouseEvent *event) {
     }
 }
 
-
 glm::vec4 Realtime::interp(glm::vec4 a, glm::vec4 b, float t) {
     glm::vec4 dest;
     dest[0] = a[0] + ((b[0] - a[0]) * t);
@@ -609,9 +608,13 @@ void Realtime::run_bezier() {
 }
 
 
+
+
 void Realtime::timerEvent(QTimerEvent *event) {
+    //run bezier fuction -- update position
     int elapsedms   = m_elapsedTimer.elapsed();
     float deltaTime = elapsedms * 0.001f;
+//    deltaTime *= 5;
     m_elapsedTimer.restart();
 
     // Use deltaTime and m_keyMap here to move around
@@ -620,6 +623,7 @@ void Realtime::timerEvent(QTimerEvent *event) {
     glm::vec3 left = glm::normalize(glm::cross(glm::vec3(cam.cdata.up), glm::vec3(cam.cdata.look)));
     glm::vec4 normalized = glm::normalize(look - pos);
     if (bezT > 1000) {
+
             bezFlag = false;
             bezT = 1;
         } else if (bezFlag) {
@@ -691,7 +695,6 @@ void Realtime::timerEvent(QTimerEvent *event) {
                 cam.updateTranslation(translate);
             }
     }
-
 
     update(); // asks for a PaintGL() call to occur
 }

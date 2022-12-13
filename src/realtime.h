@@ -123,6 +123,7 @@ private:
     glm::mat4 initialView; // sky dome view and proj basically
     glm::mat4 initialProj;
 
+
     GLuint sky_vbo;
     GLuint sky_vao;
     GLuint sky_ebo;
@@ -140,6 +141,9 @@ private:
 
 
     // bezier stuff
+
+    bool rotating;
+
     glm::vec4 interp(glm::vec4 a, glm::vec4 b, float t);
     void bezier();
     void run_bezier();
@@ -148,6 +152,13 @@ private:
     glm::vec4 bezB;
     glm::vec4 bezC;
     glm::vec4 bezD;
+
     float bezT;
     bool bezFlag;
+
+
+    float bezT;
+    bool bezFlag;
+
+
 };
