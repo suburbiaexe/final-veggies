@@ -48,9 +48,10 @@ void Realtime::generateShapeData() {
     m_cubeData = cube.generateShape();
     m_cylinderData = cylinder.generateShape();
     m_coneData = cone.generateShape();
+
 }
 
-
+/*********************************initializeGL*********************************/
 void Realtime::initializeGL() {
     m_devicePixelRatio = this->devicePixelRatio();
 
@@ -195,6 +196,7 @@ void Realtime::initializeGL() {
                     &cubemapTexture);
 }
 
+/******************************cube + sky map*****************************/
 void Realtime::create_cube_map(
     const char* front,
     const char* back,
@@ -246,6 +248,7 @@ bool Realtime::load_cube_map_side(GLuint texture, GLenum side_target, const char
     return true;
 }
 
+/*********************************fbo*********************************/
 void Realtime::makeFBO() {
     glGenTextures(1, &m_fbo_texture);
     glActiveTexture(GL_TEXTURE0);
@@ -276,6 +279,7 @@ void Realtime::makeFBO() {
 }
 
 
+/*****************************paintGeometry*******************************/
 void Realtime::paintGeometry(int pass) {
     glm::mat4 viewMat = cam.viewMat;
     glm::mat4 projMat = cam.projMat;
@@ -377,9 +381,11 @@ void Realtime::paintGeometry(int pass) {
     glUseProgram(0);
 }
 
+/*********************************paintSun*********************************/
 void Realtime::paintSun() {
     // change to colorProgram
     glUseProgram(colorProgram);
+    glDisable(GL_DEPTH_TEST);
 
     // when initializing camera, set view and proj mats and then always pass those in, dont get new ones
     glm::mat3 invTransposeModel;
@@ -413,11 +419,11 @@ void Realtime::paintSun() {
 }
 
 
+/*********************************paintGL*********************************/
 void Realtime::paintGL() {
     // Students: anything requiring OpenGL calls every frame should be done here
 
     glm::mat4 proj = cam.projMat;
-//    glm::mat4 view = cam.viewMat;
     glm::mat4 view = glm::mat4(glm::mat3(cam.viewMat));
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
@@ -430,14 +436,17 @@ void Realtime::paintGL() {
     glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projmat"), 1, GL_FALSE, &proj[0][0]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+
     glDepthMask(GL_TRUE);
 
     // Render pass 1: render sun and occluding shapes to fbo texture
+
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glViewport(0, 0, m_screen_width, m_screen_height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     paintSun();
     paintGeometry(1);
+    glDepthMask(GL_TRUE);
 
     // Render pass 2: render shapes to default framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
@@ -445,9 +454,10 @@ void Realtime::paintGL() {
     paintGeometry(0);
 
     // Render pass 3: render shapes with sun and add rays
-    glDepthMask(GL_TRUE);
+
+//    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
-////    glBlendFunc(GL_SRC_ALPHA, GL_ONE); // no longer blending - not drawing shapes in front anymore ?
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
@@ -455,7 +465,7 @@ void Realtime::paintGL() {
 
     glUseProgram(postpassProgram);
 
-    glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0);
+    glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0.0);
     glm::vec4 sunPos = glm::vec4(0, 0, -40, 1.0);
     sunPos = sunPos * view;
     sunPos = sunPos * cam.projMat;
@@ -476,8 +486,13 @@ void Realtime::paintGL() {
     glUseProgram(0);
 
     glDisable(GL_BLEND);
+//    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+
 }
 
+
+/******************************resize + changed*******************************/
 void Realtime::resizeGL(int w, int h) {
     // Tells OpenGL how big the screen is
     glViewport(0, 0, size().width() * m_devicePixelRatio, size().height() * m_devicePixelRatio);
@@ -527,6 +542,7 @@ void Realtime::settingsChanged() {
     cube.updateParams(param1);
     sphere.updateParams(param1, param2);
     cylinder.updateParams(param1, param2);
+    terrain.updateParams(param1, param2);
 
     generateShapeData();
     bindVBO();
@@ -535,6 +551,8 @@ void Realtime::settingsChanged() {
 }
 
 // ================== Project 6: Action!
+
+/********************************* movement *********************************/
 
 void Realtime::keyPressEvent(QKeyEvent *event) {
     m_keyMap[Qt::Key(event->key())] = true;
@@ -607,14 +625,9 @@ void Realtime::run_bezier() {
         bezT += 1;
 }
 
-
-
-
 void Realtime::timerEvent(QTimerEvent *event) {
-    //run bezier fuction -- update position
     int elapsedms   = m_elapsedTimer.elapsed();
     float deltaTime = elapsedms * 0.001f;
-//    deltaTime *= 5;
     m_elapsedTimer.restart();
 
     // Use deltaTime and m_keyMap here to move around
@@ -635,9 +648,9 @@ void Realtime::timerEvent(QTimerEvent *event) {
             }
 
             if (m_keyMap.at(Qt::Key_W)) {
-                float val0 = (float) normalized[0] * deltaTime;
-                float val1 = (float) normalized[1] * deltaTime;
-                float val2 = (float) normalized[2] * deltaTime;
+                float val0 = (float) -normalized[0] * deltaTime;
+                float val1 = (float) -normalized[1] * deltaTime;
+                float val2 = (float) -normalized[2] * deltaTime;
                 glm::mat4 translate = glm::mat4(1, 0, 0, 0,
                          0, 1, 0, 0,
                          0, 0, 1, 0,
@@ -645,9 +658,9 @@ void Realtime::timerEvent(QTimerEvent *event) {
                 cam.updateTranslation(translate);
             }
             if (m_keyMap.at(Qt::Key_S)) {
-                float val0 = (float) -normalized[0] * deltaTime;
-                float val1 = (float) -normalized[1] * deltaTime;
-                float val2 = (float) -normalized[2] * deltaTime;
+                float val0 = (float) normalized[0] * deltaTime;
+                float val1 = (float) normalized[1] * deltaTime;
+                float val2 = (float) normalized[2] * deltaTime;
                 glm::mat4 translate = glm::mat4(1, 0, 0, 0,
                          0, 1, 0 ,0,
                          0, 0, 1, 0,
@@ -655,9 +668,9 @@ void Realtime::timerEvent(QTimerEvent *event) {
                 cam.updateTranslation(translate);
             }
             if (m_keyMap.at(Qt::Key_A)) {
-                float val0 = (float) left[0] * deltaTime;
-                float val1 = (float) left[1] * deltaTime;
-                float val2 = (float) left[2] * deltaTime;
+                float val0 = (float) -left[0] * deltaTime;
+                float val1 = (float) -left[1] * deltaTime;
+                float val2 = (float) -left[2] * deltaTime;
                 glm::mat4 translate = glm::mat4(1, 0, 0, 0,
                          0, 1, 0 ,0,
                          0, 0, 1, 0,
@@ -665,9 +678,9 @@ void Realtime::timerEvent(QTimerEvent *event) {
                 cam.updateTranslation(translate);
             }
             if (m_keyMap.at(Qt::Key_D)) {
-                float val0 = -(float) left[0] * deltaTime;
-                float val1 = -(float) left[1] * deltaTime;
-                float val2 = -(float) left[2] * deltaTime;
+                float val0 = (float) left[0] * deltaTime;
+                float val1 = (float) left[1] * deltaTime;
+                float val2 = (float) left[2] * deltaTime;
                 glm::mat4 translate = glm::mat4(1, 0, 0, 0,
                          0, 1, 0 ,0,
                          0, 0, 1, 0,
