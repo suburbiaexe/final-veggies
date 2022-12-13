@@ -25,6 +25,7 @@ Realtime::Realtime(QWidget *parent)
     m_keyMap[Qt::Key_Space]   = false;
 
     // If you must use this function, do not edit anything above this
+    m_keyMap[Qt::Key_C] = false;
 }
 
 void Realtime::finish() {
@@ -109,6 +110,9 @@ void Realtime::initializeGL() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<void*>(0));
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<void*>(3 * sizeof(GLfloat)));
+
+    //BEZIER STUFF
+
 
 }
 
@@ -348,6 +352,13 @@ void Realtime::sceneChanged() {
     initialView = cam.viewMat;
     initialProj = cam.projMat;
 
+    bezA = cam.cdata.pos;
+    bezB = glm::vec4{ bezA[0] + 5, bezA[1], bezA[2] + 5, bezA[3] };
+    bezC = glm::vec4{ bezA[0] + 5, bezA[1], bezA[2] - 5, bezA[3] };
+    bezD = glm::vec4{ bezA[0] + 10, bezA[1], bezA[2] - 4, bezA[3] };
+    bezFlag = false;
+    bezT = 1;
+
     update(); // asks for a PaintGL() call to occur
 }
 
@@ -415,9 +426,54 @@ void Realtime::mouseMoveEvent(QMouseEvent *event) {
     }
 }
 
+glm::vec4 Realtime::interp(glm::vec4 a, glm::vec4 b, float t) {
+    glm::vec4 dest;
+    dest[0] = a[0] + ((b[0] - a[0]) * t);
+    dest[1] = a[1] + ((b[1] - a[1]) * t);
+    dest[2] = a[2] + ((b[2] - a[2]) * t);
+    dest[3] = 1.f;
+    return dest;
+}
+
+//void Realtime::bezier(glm::vec4 &dest, glm::vec4& aPt, glm::vec4& bPt, glm::vec4& cPt, glm::vec4& dPt, float t) {
+//    glm::vec4 ab,bc,cd,abbc,bccd;
+
+//    interp(ab, aPt, bPt, t);
+//    interp(bc, bPt, cPt, t);
+//    interp(cd, cPt, dPt, t);
+//    interp(abbc, ab, bc, t);
+//    interp(bccd, bc, cd, t);
+//    interp(dest, abbc, bccd, t);
+//}
+
+void Realtime::bezier() {
+    glm::vec4 ab,bc,cd,abbc,bccd,dest;
+
+    ab = interp(bezA, bezB, bezT/999.f);
+    bc = interp(bezB, bezC, bezT/999.f);
+    cd = interp(bezC, bezD, bezT/999.f);
+    abbc = interp(ab, bc, bezT/999.f);
+    bccd = interp(bc, cd, bezT/999.f);
+    dest = interp(abbc, bccd, bezT/999.f);
+    std::cout << dest[0] << " " << dest[1] << " " << dest[2] << std::endl;
+    cam.updatePosAndView(dest);
+}
+
+void Realtime::run_bezier() {
+//    for (int i = 0; i < 1000; i++) {
+//        float t = i / 999.f;
+        bezier();
+//        cam.updatePosAndView(newPos);
+//        update();
+        bezT += 1;
+//    }
+}
+
 void Realtime::timerEvent(QTimerEvent *event) {
+    //run bezier fuction -- update position
     int elapsedms   = m_elapsedTimer.elapsed();
     float deltaTime = elapsedms * 0.001f;
+//    deltaTime *= 5;
     m_elapsedTimer.restart();
 
     // Use deltaTime and m_keyMap here to move around
@@ -425,66 +481,79 @@ void Realtime::timerEvent(QTimerEvent *event) {
     glm::vec4 pos = cam.cdata.pos;
     glm::vec3 left = glm::normalize(glm::cross(glm::vec3(cam.cdata.up), glm::vec3(cam.cdata.look)));
     glm::vec4 normalized = glm::normalize(look - pos);
-    if (m_keyMap.at(Qt::Key_W)) {
-        float val0 = (float) normalized[0] * deltaTime;
-        float val1 = (float) normalized[1] * deltaTime;
-        float val2 = (float) normalized[2] * deltaTime;
-        glm::mat4 translate = glm::mat4(1, 0, 0, 0,
-                 0, 1, 0, 0,
-                 0, 0, 1, 0,
-                 val0, val1, val2, 1);
-        cam.updateTranslation(translate);
+    if (bezT > 1000) {
+        bezFlag = false;
+        bezT = 1;
+    } else if (bezFlag) {
+        run_bezier();
+    } else {
+        if (m_keyMap.at(Qt::Key_C)) {
+            bezFlag = true;
+            //set bezier global flag to true
+//            m_keyMap[Qt::Key_C] = false;
+        }
+
+        if (m_keyMap.at(Qt::Key_W)) {
+            float val0 = (float) normalized[0] * deltaTime;
+            float val1 = (float) normalized[1] * deltaTime;
+            float val2 = (float) normalized[2] * deltaTime;
+            glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                     0, 1, 0, 0,
+                     0, 0, 1, 0,
+                     val0, val1, val2, 1);
+            cam.updateTranslation(translate);
+        }
+        if (m_keyMap.at(Qt::Key_S)) {
+            float val0 = (float) -normalized[0] * deltaTime;
+            float val1 = (float) -normalized[1] * deltaTime;
+            float val2 = (float) -normalized[2] * deltaTime;
+            glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                     0, 1, 0 ,0,
+                     0, 0, 1, 0,
+                     val0, val1, val2, 1);
+            cam.updateTranslation(translate);
+        }
+        if (m_keyMap.at(Qt::Key_A)) {
+            float val0 = (float) left[0] * deltaTime;
+            float val1 = (float) left[1] * deltaTime;
+            float val2 = (float) left[2] * deltaTime;
+            glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                     0, 1, 0 ,0,
+                     0, 0, 1, 0,
+                     val0, val1, val2, 1);
+            cam.updateTranslation(translate);
+        }
+        if (m_keyMap.at(Qt::Key_D)) {
+            float val0 = -(float) left[0] * deltaTime;
+            float val1 = -(float) left[1] * deltaTime;
+            float val2 = -(float) left[2] * deltaTime;
+            glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                     0, 1, 0 ,0,
+                     0, 0, 1, 0,
+                     val0, val1, val2, 1);
+            cam.updateTranslation(translate);
+        }
+        if (m_keyMap.at(Qt::Key_Space)) {
+            float val0 = 0.0f * deltaTime;
+            float val1 = 1.0f * deltaTime;
+            float val2 = 0.0f * deltaTime;
+            glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                     0, 1, 0 ,0,
+                     0, 0, 1, 0,
+                     val0, val1, val2, 1);
+            cam.updateTranslation(translate);
+        }
+        if (m_keyMap.at(Qt::Key_Control) ) {
+            float val0 = 0.0f * deltaTime;
+            float val1 = -1.0f * deltaTime;
+            float val2 = 0.0f * deltaTime;
+            glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                     0, 1, 0 ,0,
+                     0, 0, 1, 0,
+                     val0, val1, val2, 1);
+            cam.updateTranslation(translate);
+        }
     }
-    if (m_keyMap.at(Qt::Key_S)) {
-        float val0 = (float) -normalized[0] * deltaTime;
-        float val1 = (float) -normalized[1] * deltaTime;
-        float val2 = (float) -normalized[2] * deltaTime;
-        glm::mat4 translate = glm::mat4(1, 0, 0, 0,
-                 0, 1, 0 ,0,
-                 0, 0, 1, 0,
-                 val0, val1, val2, 1);
-        cam.updateTranslation(translate);
-    }
-    if (m_keyMap.at(Qt::Key_A)) {
-        float val0 = (float) left[0] * deltaTime;
-        float val1 = (float) left[1] * deltaTime;
-        float val2 = (float) left[2] * deltaTime;
-        glm::mat4 translate = glm::mat4(1, 0, 0, 0,
-                 0, 1, 0 ,0,
-                 0, 0, 1, 0,
-                 val0, val1, val2, 1);
-        cam.updateTranslation(translate);
-    }
-    if (m_keyMap.at(Qt::Key_D)) {
-        float val0 = -(float) left[0] * deltaTime;
-        float val1 = -(float) left[1] * deltaTime;
-        float val2 = -(float) left[2] * deltaTime;
-        glm::mat4 translate = glm::mat4(1, 0, 0, 0,
-                 0, 1, 0 ,0,
-                 0, 0, 1, 0,
-                 val0, val1, val2, 1);
-        cam.updateTranslation(translate);
-    }
-    if (m_keyMap.at(Qt::Key_Space)) {
-        float val0 = 0.0f * deltaTime;
-        float val1 = 1.0f * deltaTime;
-        float val2 = 0.0f * deltaTime;
-        glm::mat4 translate = glm::mat4(1, 0, 0, 0,
-                 0, 1, 0 ,0,
-                 0, 0, 1, 0,
-                 val0, val1, val2, 1);
-        cam.updateTranslation(translate);
-    }
-//    if (m_keyMap.at(Qt::Key_Control) ) {
-//        float val0 = 0.0f * deltaTime;
-//        float val1 = -1.0f * deltaTime;
-//        float val2 = 0.0f * deltaTime;
-//        glm::mat4 translate = glm::mat4(1, 0, 0, 0,
-//                 0, 1, 0 ,0,
-//                 0, 0, 1, 0,
-//                 val0, val1, val2, 1);
-//        cam.updateTranslation(translate);
-//    }
 
     update(); // asks for a PaintGL() call to occur
 }

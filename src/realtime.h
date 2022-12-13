@@ -124,4 +124,18 @@ private:
     glm::mat4 initialProj;
 
     bool rotating;
+
+//    void bezier(glm::vec4 &dest, glm::vec4& aPt, glm::vec4& bPt, glm::vec4& cPt, glm::vec4& dPt, float t);
+    glm::vec4 interp(glm::vec4 a, glm::vec4 b, float t);
+    void bezier();
+    void run_bezier();
+
+    glm::vec4 bezA;
+    glm::vec4 bezB;
+    glm::vec4 bezC;
+    glm::vec4 bezD;
+//    glm::vec4 goalPos;
+    float bezT;
+    bool bezFlag;
+
 };
