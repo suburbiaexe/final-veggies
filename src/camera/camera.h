@@ -45,6 +45,7 @@ public:
     glm::vec4 camworldpos;
     SceneCameraData cdata;
     void updatePerspective();
+    void updatePosAndView(glm::vec4 p);
 private:
 
     int width;
