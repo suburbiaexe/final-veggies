@@ -420,17 +420,17 @@ void Realtime::paintGL() {
 //    glm::mat4 view = cam.viewMat;
     glm::mat4 view = glm::mat4(glm::mat3(cam.viewMat));
 
-//    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
-//    glDepthMask(GL_FALSE);
-//    glUseProgram(skyboxProgram);
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-//    glBindVertexArray(sky_vao);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+    glDepthMask(GL_FALSE);
+    glUseProgram(skyboxProgram);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+    glBindVertexArray(sky_vao);
 
-//    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
-//    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projmat"), 1, GL_FALSE, &proj[0][0]);
-//    glDrawArrays(GL_TRIANGLES, 0, 36);
-//    glDepthMask(GL_TRUE);
+    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projmat"), 1, GL_FALSE, &proj[0][0]);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDepthMask(GL_TRUE);
 
     // Render pass 1: render sun and occluding shapes to fbo texture
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
@@ -447,7 +447,7 @@ void Realtime::paintGL() {
     // Render pass 3: render shapes with sun and add rays
     glDepthMask(GL_TRUE);
     glEnable(GL_BLEND);
-//    glBlendFunc(GL_SRC_ALPHA, GL_ONE); // no longer blending - not drawing shapes in front anymore ?
+////    glBlendFunc(GL_SRC_ALPHA, GL_ONE); // no longer blending - not drawing shapes in front anymore ?
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
@@ -475,7 +475,7 @@ void Realtime::paintGL() {
     glBindVertexArray(0);
     glUseProgram(0);
 
-//    glDisable(GL_BLEND);
+    glDisable(GL_BLEND);
 }
 
 void Realtime::resizeGL(int w, int h) {
