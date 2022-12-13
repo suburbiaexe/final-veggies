@@ -54,6 +54,7 @@ add_executable(${PROJECT_NAME}
     src/shapes/cone.h
     src/shapes/cylinder.h
     src/shapes/triangle.h
+    src/stb_image.h
 )
 
 # GLM: this creates its library and allows you to `#include "glm/..."`
@@ -83,6 +84,8 @@ qt6_add_resources(${PROJECT_NAME} "Resources"
         resources/shaders/color.frag
         resources/shaders/postpass.frag
         resources/shaders/postpass.vert
+        resources/shaders/skybox.frag
+        resources/shaders/skybox.vert
 )
 
 # GLEW: this provides support for Windows (including 64-bit)

@@ -61,7 +61,7 @@ private:
     GLuint phongProgram;     // Stores id of shader program
     GLuint colorProgram;
     GLuint postpassProgram;
-
+    GLuint skyboxProgram;
 
     Camera cam;
     RenderData metaData;
@@ -123,5 +123,19 @@ private:
     glm::mat4 initialView; // sky dome view and proj basically
     glm::mat4 initialProj;
 
-    bool rotating;
+    GLuint sky_vbo;
+    GLuint sky_vao;
+    GLuint sky_ebo;
+    GLuint cubemapTexture;
+    bool load_cube_map_side(
+      GLuint texture, GLenum side_target, const char* file_name);
+    void create_cube_map(
+      const char* front,
+      const char* back,
+      const char* top,
+      const char* bottom,
+      const char* left,
+      const char* right,
+      GLuint* tex_cube);
+
 };
