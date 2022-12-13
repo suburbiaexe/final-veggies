@@ -157,8 +157,4 @@ private:
     bool bezFlag;
 
 
-    float bezT;
-    bool bezFlag;
-
-
 };
