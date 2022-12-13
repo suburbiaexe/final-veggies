@@ -432,62 +432,6 @@ void Realtime::paintGL() {
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glDepthMask(GL_TRUE);
 
-
-
-//    glCullFace(GL_FRONT);
-//    glDepthFunc(GL_LEQUAL);
-//    glDepthMask(GL_FALSE);
-//    glUseProgram(skyboxProgram);
-
-//    glm::mat4 view = glm::mat4(glm::mat3(cam.viewMat));
-//    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
-//    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projmat"), 1, GL_FALSE, &cam.projMat[0][0]);
-//    glBindVertexArray(sky_vao);
-//    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-//    glDrawArrays(GL_TRIANGLES, 0, 36);
-//    glDepthMask(GL_TRUE);
-//    glBindVertexArray(0);
-//    glUseProgram(0);
-//    glCullFace(GL_BACK);
-
-
-
-
-    //    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
-    //    glViewport(0, 0, m_screen_width, m_screen_height);
-
-
-
-////    glEnable(GL_CULL_FACE);
-////    glCullFace(GL_FRONT);
-//    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
-//    glViewport(0, 0, m_screen_width, m_screen_height);
-//    glDepthFunc(GL_LEQUAL);
-//    glUseProgram(skyboxProgram);
-////    glm::mat4 view = glm::mat4(1.0f);
-////    glm::mat4 projection = glm::mat4(1.0f);
-
-//    // sus
-////    view = glm::mat4(glm::mat3(glm::lookAt(glm::vec3(metaData.cameraData.pos),
-////                                           glm::vec3(metaData.cameraData.pos + metaData.cameraData.look),
-////                                           glm::vec3(metaData.cameraData.up))));
-////    projection = glm::perspective(glm::radians(45.0f), (float)m_screen_width / m_screen_height, 0.1f, 100.0f);
-//    glm::mat4 view = glm::mat4(glm::mat3(cam.viewMat));
-//    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
-//    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projmat"), 1, GL_FALSE, &cam.projMat[0][0]);
-//    glBindVertexArray(sky_vao);
-//    glActiveTexture(GL_TEXTURE1);
-//    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-////    glDrawArrays(GL_TRIANGLES, 0, 6);
-//    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-//    glBindVertexArray(0);
-
-//    // Switch back to the normal depth function
-//    glDepthFunc(GL_LESS);
-
-
-
-
     // Render pass 1: render sun and occluding shapes to fbo texture
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glViewport(0, 0, m_screen_width, m_screen_height);
@@ -527,9 +471,6 @@ void Realtime::paintGL() {
     glBindVertexArray(0);
     glUseProgram(0);
     glDisable(GL_BLEND);
-
-
-
 }
 
 void Realtime::resizeGL(int w, int h) {
