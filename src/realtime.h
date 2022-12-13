@@ -61,7 +61,7 @@ private:
     GLuint phongProgram;     // Stores id of shader program
     GLuint colorProgram;
     GLuint postpassProgram;
-
+    GLuint skyboxProgram;
 
     Camera cam;
     RenderData metaData;
@@ -123,9 +123,27 @@ private:
     glm::mat4 initialView; // sky dome view and proj basically
     glm::mat4 initialProj;
 
+
+    GLuint sky_vbo;
+    GLuint sky_vao;
+    GLuint sky_ebo;
+    GLuint cubemapTexture;
+    bool load_cube_map_side(
+      GLuint texture, GLenum side_target, const char* file_name);
+    void create_cube_map(
+      const char* front,
+      const char* back,
+      const char* top,
+      const char* bottom,
+      const char* left,
+      const char* right,
+      GLuint* tex_cube);
+
+
+    // bezier stuff
+
     bool rotating;
 
-//    void bezier(glm::vec4 &dest, glm::vec4& aPt, glm::vec4& bPt, glm::vec4& cPt, glm::vec4& dPt, float t);
     glm::vec4 interp(glm::vec4 a, glm::vec4 b, float t);
     void bezier();
     void run_bezier();
@@ -134,8 +152,13 @@ private:
     glm::vec4 bezB;
     glm::vec4 bezC;
     glm::vec4 bezD;
-//    glm::vec4 goalPos;
+
     float bezT;
     bool bezFlag;
+
+
+    float bezT;
+    bool bezFlag;
+
 
 };

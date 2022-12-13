@@ -7,6 +7,12 @@
 #include "settings.h"
 #include "glm/gtx/transform.hpp"
 
+// added for skybox
+#include <filesystem>
+namespace fs = std::filesystem;
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 
 // ================== Project 5: Lights, Camera
 
@@ -77,6 +83,7 @@ void Realtime::initializeGL() {
     phongProgram = ShaderLoader::createShaderProgram(":/resources/shaders/default.vert", ":/resources/shaders/default.frag");
     colorProgram = ShaderLoader::createShaderProgram(":/resources/shaders/default.vert", ":/resources/shaders/color.frag");
     postpassProgram = ShaderLoader::createShaderProgram(":/resources/shaders/postpass.vert", ":/resources/shaders/postpass.frag");
+    skyboxProgram = ShaderLoader::createShaderProgram(":/resources/shaders/skybox.vert", ":/resources/shaders/skybox.frag");
 
     initializeBuffers();
     bindVBO();
@@ -111,9 +118,132 @@ void Realtime::initializeGL() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<void*>(3 * sizeof(GLfloat)));
 
-    //BEZIER STUFF
+    glBindVertexArray(0);
 
+    // skybox stuff
+    glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0); // not sure if this is right?
 
+    glEnable(GL_TEXTURE_CUBE_MAP_EXT);
+    float points[] = {
+      -10.0f,  10.0f, -10.0f,
+      -10.0f, -10.0f, -10.0f,
+       10.0f, -10.0f, -10.0f,
+       10.0f, -10.0f, -10.0f,
+       10.0f,  10.0f, -10.0f,
+      -10.0f,  10.0f, -10.0f,
+
+      -10.0f, -10.0f,  10.0f,
+      -10.0f, -10.0f, -10.0f,
+      -10.0f,  10.0f, -10.0f,
+      -10.0f,  10.0f, -10.0f,
+      -10.0f,  10.0f,  10.0f,
+      -10.0f, -10.0f,  10.0f,
+
+       10.0f, -10.0f, -10.0f,
+       10.0f, -10.0f,  10.0f,
+       10.0f,  10.0f,  10.0f,
+       10.0f,  10.0f,  10.0f,
+       10.0f,  10.0f, -10.0f,
+       10.0f, -10.0f, -10.0f,
+
+      -10.0f, -10.0f,  10.0f,
+      -10.0f,  10.0f,  10.0f,
+       10.0f,  10.0f,  10.0f,
+       10.0f,  10.0f,  10.0f,
+       10.0f, -10.0f,  10.0f,
+      -10.0f, -10.0f,  10.0f,
+
+      -10.0f,  10.0f, -10.0f,
+       10.0f,  10.0f, -10.0f,
+       10.0f,  10.0f,  10.0f,
+       10.0f,  10.0f,  10.0f,
+      -10.0f,  10.0f,  10.0f,
+      -10.0f,  10.0f, -10.0f,
+
+      -10.0f, -10.0f, -10.0f,
+      -10.0f, -10.0f,  10.0f,
+       10.0f, -10.0f, -10.0f,
+       10.0f, -10.0f, -10.0f,
+      -10.0f, -10.0f,  10.0f,
+       10.0f, -10.0f,  10.0f
+    };
+    glGenBuffers(1, &sky_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, sky_vbo);
+    glBufferData(GL_ARRAY_BUFFER, 3 * 36 * sizeof(float), &points, GL_STATIC_DRAW);
+
+    glGenVertexArrays(1, &sky_vao);
+    glBindVertexArray(sky_vao);
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, sky_vao);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    std::string parentDir = (fs::current_path().fs::path::parent_path()).string();
+    parentDir = parentDir + "/final-veggies/resources/skybox/";
+
+    std::string front = parentDir+ "front.jpg";
+    std::string back = parentDir+ "back.jpg";
+    std::string top = parentDir+ "top.jpg";
+    std::string bottom = parentDir+ "bottom.jpg";
+    std::string left = parentDir+ "left.jpg";
+    std::string right = parentDir+ "right.jpg";
+    create_cube_map(front.c_str(),
+                    back.c_str(),
+                    top.c_str(),
+                    bottom.c_str(),
+                    left.c_str(),
+                    right.c_str(),
+                    &cubemapTexture);
+}
+
+void Realtime::create_cube_map(
+    const char* front,
+    const char* back,
+    const char* top,
+    const char* bottom,
+    const char* left,
+    const char* right,
+    GLuint* tex_cube) {
+    // generate a cube-map texture to hold all the sides
+    glActiveTexture(GL_TEXTURE0);
+    glGenTextures(1, tex_cube);
+
+    // load each image and copy into a side of the cube-map texture
+    load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, front);
+    load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_POSITIVE_Z, back);
+    load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_POSITIVE_Y, top);
+    load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, bottom);
+    load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, left);
+    load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_POSITIVE_X, right);
+      // format cube map texture
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
+bool Realtime::load_cube_map_side(GLuint texture, GLenum side_target, const char* file_name) {
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+
+    int x, y, n;
+    int force_channels = 4;
+    unsigned char*  image_data = stbi_load(file_name, &x, &y, &n, force_channels);
+    if (!image_data) {
+      fprintf(stderr, "ERROR: could not load %s\n", file_name);
+      return false;
+    }
+    // non-power-of-2 dimensions check
+    if ((x & (x - 1)) != 0 || (y & (y - 1)) != 0) {
+      fprintf(stderr, "WARNING: image %s is not power-of-2 dimensions\n", file_name);
+    }
+
+    // copy image data into 'target' side of cube map
+    glTexImage2D(side_target, 0, GL_RGBA,
+                 x, y, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+    free(image_data);
+    return true;
 }
 
 void Realtime::makeFBO() {
@@ -151,6 +281,7 @@ void Realtime::paintGeometry(int pass) {
     glm::mat4 projMat = cam.projMat;
 
     if (pass == 1) {
+        // change back to colorProgram
         glUseProgram(colorProgram);
 
         glm::mat3 invTransposeModel;
@@ -247,6 +378,7 @@ void Realtime::paintGeometry(int pass) {
 }
 
 void Realtime::paintSun() {
+    // change to colorProgram
     glUseProgram(colorProgram);
 
     // when initializing camera, set view and proj mats and then always pass those in, dont get new ones
@@ -254,10 +386,12 @@ void Realtime::paintSun() {
     glm::mat4 ctm = glm::mat4(1.0f);
 
     glm::mat4 proj = cam.projMat;
-    glm::mat4 view = cam.viewMat;
+//    glm::mat4 view = cam.viewMat;
+    glm::mat4 view = glm::mat4(glm::mat3(cam.viewMat));
 
     glUniformMatrix4fv(glGetUniformLocation(colorProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(colorProgram, "projmat"), 1, GL_FALSE, &proj[0][0]);
+
 
     glUniform1f(glGetUniformLocation(colorProgram, "sun"), 1.0);
     ctm *= glm::translate(glm::vec3(10, 10, -30));
@@ -282,6 +416,22 @@ void Realtime::paintSun() {
 void Realtime::paintGL() {
     // Students: anything requiring OpenGL calls every frame should be done here
 
+    glm::mat4 proj = cam.projMat;
+//    glm::mat4 view = cam.viewMat;
+    glm::mat4 view = glm::mat4(glm::mat3(cam.viewMat));
+
+//    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+//    glDepthMask(GL_FALSE);
+//    glUseProgram(skyboxProgram);
+//    glActiveTexture(GL_TEXTURE0);
+//    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+//    glBindVertexArray(sky_vao);
+
+//    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
+//    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projmat"), 1, GL_FALSE, &proj[0][0]);
+//    glDrawArrays(GL_TRIANGLES, 0, 36);
+//    glDepthMask(GL_TRUE);
+
     // Render pass 1: render sun and occluding shapes to fbo texture
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glViewport(0, 0, m_screen_width, m_screen_height);
@@ -295,15 +445,19 @@ void Realtime::paintGL() {
     paintGeometry(0);
 
     // Render pass 3: render shapes with sun and add rays
+    glDepthMask(GL_TRUE);
+    glEnable(GL_BLEND);
+//    glBlendFunc(GL_SRC_ALPHA, GL_ONE); // no longer blending - not drawing shapes in front anymore ?
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
     glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
     glViewport(0, 0, m_screen_width, m_screen_height);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
     glUseProgram(postpassProgram);
 
     glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0);
-    glm::vec4 sunPos = glm::vec4(0, 0, -10, 1.0);
-    sunPos = sunPos * cam.viewMat;
+    glm::vec4 sunPos = glm::vec4(0, 0, -40, 1.0);
+    sunPos = sunPos * view;
     sunPos = sunPos * cam.projMat;
 //    sunPos = sunPos * (1.f / sunPos[3]);
     sunPos = sunPos + glm::vec4(1.0, 1.0, 0.0, 0.0);
@@ -320,7 +474,8 @@ void Realtime::paintGL() {
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
     glUseProgram(0);
-    glDisable(GL_BLEND);
+
+//    glDisable(GL_BLEND);
 }
 
 void Realtime::resizeGL(int w, int h) {
@@ -435,17 +590,6 @@ glm::vec4 Realtime::interp(glm::vec4 a, glm::vec4 b, float t) {
     return dest;
 }
 
-//void Realtime::bezier(glm::vec4 &dest, glm::vec4& aPt, glm::vec4& bPt, glm::vec4& cPt, glm::vec4& dPt, float t) {
-//    glm::vec4 ab,bc,cd,abbc,bccd;
-
-//    interp(ab, aPt, bPt, t);
-//    interp(bc, bPt, cPt, t);
-//    interp(cd, cPt, dPt, t);
-//    interp(abbc, ab, bc, t);
-//    interp(bccd, bc, cd, t);
-//    interp(dest, abbc, bccd, t);
-//}
-
 void Realtime::bezier() {
     glm::vec4 ab,bc,cd,abbc,bccd,dest;
 
@@ -455,19 +599,16 @@ void Realtime::bezier() {
     abbc = interp(ab, bc, bezT/999.f);
     bccd = interp(bc, cd, bezT/999.f);
     dest = interp(abbc, bccd, bezT/999.f);
-    std::cout << dest[0] << " " << dest[1] << " " << dest[2] << std::endl;
     cam.updatePosAndView(dest);
 }
 
 void Realtime::run_bezier() {
-//    for (int i = 0; i < 1000; i++) {
-//        float t = i / 999.f;
         bezier();
-//        cam.updatePosAndView(newPos);
-//        update();
         bezT += 1;
-//    }
 }
+
+
+
 
 void Realtime::timerEvent(QTimerEvent *event) {
     //run bezier fuction -- update position
@@ -482,77 +623,77 @@ void Realtime::timerEvent(QTimerEvent *event) {
     glm::vec3 left = glm::normalize(glm::cross(glm::vec3(cam.cdata.up), glm::vec3(cam.cdata.look)));
     glm::vec4 normalized = glm::normalize(look - pos);
     if (bezT > 1000) {
-        bezFlag = false;
-        bezT = 1;
-    } else if (bezFlag) {
-        run_bezier();
-    } else {
-        if (m_keyMap.at(Qt::Key_C)) {
-            bezFlag = true;
-            //set bezier global flag to true
-//            m_keyMap[Qt::Key_C] = false;
-        }
 
-        if (m_keyMap.at(Qt::Key_W)) {
-            float val0 = (float) normalized[0] * deltaTime;
-            float val1 = (float) normalized[1] * deltaTime;
-            float val2 = (float) normalized[2] * deltaTime;
-            glm::mat4 translate = glm::mat4(1, 0, 0, 0,
-                     0, 1, 0, 0,
-                     0, 0, 1, 0,
-                     val0, val1, val2, 1);
-            cam.updateTranslation(translate);
-        }
-        if (m_keyMap.at(Qt::Key_S)) {
-            float val0 = (float) -normalized[0] * deltaTime;
-            float val1 = (float) -normalized[1] * deltaTime;
-            float val2 = (float) -normalized[2] * deltaTime;
-            glm::mat4 translate = glm::mat4(1, 0, 0, 0,
-                     0, 1, 0 ,0,
-                     0, 0, 1, 0,
-                     val0, val1, val2, 1);
-            cam.updateTranslation(translate);
-        }
-        if (m_keyMap.at(Qt::Key_A)) {
-            float val0 = (float) left[0] * deltaTime;
-            float val1 = (float) left[1] * deltaTime;
-            float val2 = (float) left[2] * deltaTime;
-            glm::mat4 translate = glm::mat4(1, 0, 0, 0,
-                     0, 1, 0 ,0,
-                     0, 0, 1, 0,
-                     val0, val1, val2, 1);
-            cam.updateTranslation(translate);
-        }
-        if (m_keyMap.at(Qt::Key_D)) {
-            float val0 = -(float) left[0] * deltaTime;
-            float val1 = -(float) left[1] * deltaTime;
-            float val2 = -(float) left[2] * deltaTime;
-            glm::mat4 translate = glm::mat4(1, 0, 0, 0,
-                     0, 1, 0 ,0,
-                     0, 0, 1, 0,
-                     val0, val1, val2, 1);
-            cam.updateTranslation(translate);
-        }
-        if (m_keyMap.at(Qt::Key_Space)) {
-            float val0 = 0.0f * deltaTime;
-            float val1 = 1.0f * deltaTime;
-            float val2 = 0.0f * deltaTime;
-            glm::mat4 translate = glm::mat4(1, 0, 0, 0,
-                     0, 1, 0 ,0,
-                     0, 0, 1, 0,
-                     val0, val1, val2, 1);
-            cam.updateTranslation(translate);
-        }
-        if (m_keyMap.at(Qt::Key_Control) ) {
-            float val0 = 0.0f * deltaTime;
-            float val1 = -1.0f * deltaTime;
-            float val2 = 0.0f * deltaTime;
-            glm::mat4 translate = glm::mat4(1, 0, 0, 0,
-                     0, 1, 0 ,0,
-                     0, 0, 1, 0,
-                     val0, val1, val2, 1);
-            cam.updateTranslation(translate);
-        }
+            bezFlag = false;
+            bezT = 1;
+        } else if (bezFlag) {
+            run_bezier();
+        } else {
+            if (m_keyMap.at(Qt::Key_C)) {
+                bezFlag = true;
+                //set bezier global flag to true
+            }
+
+            if (m_keyMap.at(Qt::Key_W)) {
+                float val0 = (float) normalized[0] * deltaTime;
+                float val1 = (float) normalized[1] * deltaTime;
+                float val2 = (float) normalized[2] * deltaTime;
+                glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                         0, 1, 0, 0,
+                         0, 0, 1, 0,
+                         val0, val1, val2, 1);
+                cam.updateTranslation(translate);
+            }
+            if (m_keyMap.at(Qt::Key_S)) {
+                float val0 = (float) -normalized[0] * deltaTime;
+                float val1 = (float) -normalized[1] * deltaTime;
+                float val2 = (float) -normalized[2] * deltaTime;
+                glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                         0, 1, 0 ,0,
+                         0, 0, 1, 0,
+                         val0, val1, val2, 1);
+                cam.updateTranslation(translate);
+            }
+            if (m_keyMap.at(Qt::Key_A)) {
+                float val0 = (float) left[0] * deltaTime;
+                float val1 = (float) left[1] * deltaTime;
+                float val2 = (float) left[2] * deltaTime;
+                glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                         0, 1, 0 ,0,
+                         0, 0, 1, 0,
+                         val0, val1, val2, 1);
+                cam.updateTranslation(translate);
+            }
+            if (m_keyMap.at(Qt::Key_D)) {
+                float val0 = -(float) left[0] * deltaTime;
+                float val1 = -(float) left[1] * deltaTime;
+                float val2 = -(float) left[2] * deltaTime;
+                glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                         0, 1, 0 ,0,
+                         0, 0, 1, 0,
+                         val0, val1, val2, 1);
+                cam.updateTranslation(translate);
+            }
+            if (m_keyMap.at(Qt::Key_Space)) {
+                float val0 = 0.0f * deltaTime;
+                float val1 = 1.0f * deltaTime;
+                float val2 = 0.0f * deltaTime;
+                glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                         0, 1, 0 ,0,
+                         0, 0, 1, 0,
+                         val0, val1, val2, 1);
+                cam.updateTranslation(translate);
+            }
+            if (m_keyMap.at(Qt::Key_Control) ) {
+                float val0 = 0.0f * deltaTime;
+                float val1 = -1.0f * deltaTime;
+                float val2 = 0.0f * deltaTime;
+                glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                         0, 1, 0 ,0,
+                         0, 0, 1, 0,
+                         val0, val1, val2, 1);
+                cam.updateTranslation(translate);
+            }
     }
 
     update(); // asks for a PaintGL() call to occur
