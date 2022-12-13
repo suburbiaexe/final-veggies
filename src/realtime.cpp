@@ -119,142 +119,8 @@ void Realtime::initializeGL() {
 
     glBindVertexArray(0);
 
-//    float skyboxVertices[] =
-//    {
-//        //   Coordinates
-//        -1.0f, -1.0f,  1.0f,//        7--------6
-//         1.0f, -1.0f,  1.0f,//       /|       /|
-//         1.0f, -1.0f, -1.0f,//      4--------5 |
-//        -1.0f, -1.0f, -1.0f,//      | |      | |
-//        -1.0f,  1.0f,  1.0f,//      | 3------|-2
-//         1.0f,  1.0f,  1.0f,//      |/       |/
-//         1.0f,  1.0f, -1.0f,//      0--------1
-//        -1.0f,  1.0f, -1.0f
-//    };
-
-//    static const GLfloat skyboxVertices[] =
-//    {
-//        1.0f, -1.0f,  1.0f,
-//        1.0f,  1.0f,  1.0f,
-//        1.0f,  1.0f, -1.0f,
-//        -1.0f, -1.0f,  1.0f,
-//        -1.0f, -1.0f, -1.0f,
-//        -1.0f,  1.0f, -1.0f,
-//        -1.0f,  1.0f,  1.0f,
-//        -1.0f,  1.0f, -1.0f,
-//        1.0f,  1.0f, -1.0f,
-//        1.0f,  1.0f,  1.0f,
-//        -1.0f,  1.0f,  1.0f,
-//        -1.0f, -1.0f,  1.0f,
-//        1.0f, -1.0f,  1.0f,
-//        1.0f, -1.0f, -1.0f,
-//        -1.0f, -1.0f, -1.0f,
-//        1.0f, -1.0f,  1.0f,
-//        -1.0f, -1.0f,  1.0f,
-//        -1.0f,  1.0f,  1.0f,
-//        1.0f,  1.0f,  1.0f,
-//        -1.0f, -1.0f, -1.0f,
-//        1.0f, -1.0f, -1.0f,
-//        1.0f,  1.0f, -1.0f,
-//        -1.0f,  1.0f, -1.0f
-//    };
-
-//    unsigned int skyboxIndices[] =
-//    {
-//        // Right
-//        1, 2, 6,
-//        6, 5, 1,
-//        // Left
-//        0, 4, 7,
-//        7, 3, 0,
-//        // Top
-//        4, 5, 6,
-//        6, 7, 4,
-//        // Bottom
-//        0, 3, 2,
-//        2, 1, 0,
-//        // Back
-//        0, 1, 5,
-//        5, 4, 0,
-//        // Front
-//        3, 7, 6,
-//        6, 2, 3
-//    };
-
-//    glGenVertexArrays(1, &sky_vao);
-//    glGenBuffers(1, &sky_vbo);
-//    glGenBuffers(1, &sky_ebo);
-//    glBindVertexArray(sky_vao);
-//    glBindBuffer(GL_ARRAY_BUFFER, sky_vbo);
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sky_ebo);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(skyboxIndices), &skyboxIndices, GL_STATIC_DRAW);
-//    glEnableVertexAttribArray(0);
-//    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0); // check this
-//    glBindBuffer(GL_ARRAY_BUFFER, 0);
-//    glBindVertexArray(0);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-//    std::string parentDir = (fs::current_path().fs::path::parent_path()).string();
-//    std::string facesCubemap[6] = {
-//        parentDir + "/final-veggies/resources/skybox/right.jpg",
-//        parentDir + "/final-veggies/resources/skybox/left.jpg",
-//        parentDir + "/final-veggies/resources/skybox/top.jpg",
-//        parentDir + "/final-veggies/resources/skybox/bottom.jpg",
-//        parentDir + "/final-veggies/resources/skybox/back.jpg",
-//        parentDir + "/final-veggies/resources/skybox/front.jpg" // check this order
-//    };
-
-//    glEnable(GL_DEPTH_TEST);
-
-//    // Enables Cull Facing
-//    glEnable(GL_CULL_FACE);
-//    // Keeps front faces
-//    glCullFace(GL_FRONT);
-//    // Uses counter clock-wise standard
-//    glFrontFace(GL_CCW);
-
-//    glGenTextures(1, &cubemapTexture);
-//    glActiveTexture(GL_TEXTURE1);
-//    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-
-
-//    for (unsigned int i = 0; i < 6; i++)
-//        {
-//            int width, height, nrChannels;
-//            unsigned char* data = stbi_load(facesCubemap[i].c_str(), &width, &height, &nrChannels, 0);
-//            if (data)
-//            {
-//                stbi_set_flip_vertically_on_load(false);
-//                glTexImage2D
-//                (
-//                    GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-//                    0,
-//                    GL_RGB,
-//                    width,
-//                    height,
-//                    0,
-//                    GL_RGB,
-//                    GL_UNSIGNED_BYTE,
-//                    data
-//                );
-//                stbi_image_free(data);
-//            }
-//            else
-//            {
-//                std::cout << "Failed to load texture: " << facesCubemap[i] << std::endl;
-//                stbi_image_free(data);
-//            }
-//        }
-//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    // skybox stuff
     glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0); // not sure if this is right?
-//    glBindTexture(GL_TEXTURE_2D, 0);
-
 
     glEnable(GL_TEXTURE_CUBE_MAP_EXT);
     float points[] = {
@@ -312,14 +178,7 @@ void Realtime::initializeGL() {
 
     std::string parentDir = (fs::current_path().fs::path::parent_path()).string();
     parentDir = parentDir + "/final-veggies/resources/skybox/";
-//    std::string facesCubemap[6] = {
-//        // fill with file path to textures ??
-//        parentDir + "/final-veggies/resources/skybox/right.jpg",
-//        parentDir + "/final-veggies/resources/skybox/left.jpg",
-//        parentDir + "/final-veggies/resources/skybox/top.jpg",
-//        parentDir + "/final-veggies/resources/skybox/bottom.jpg",
-//        parentDir + "/final-veggies/resources/skybox/front.jpg",
-//        parentDir + "/final-veggies/resources/skybox/back.jpg"
+
     std::string front = parentDir+ "front.jpg";
     std::string back = parentDir+ "back.jpg";
     std::string top = parentDir+ "top.jpg";
@@ -336,64 +195,54 @@ void Realtime::initializeGL() {
 }
 
 void Realtime::create_cube_map(
-  const char* front,
-  const char* back,
-  const char* top,
-  const char* bottom,
-  const char* left,
-  const char* right,
-  GLuint* tex_cube) {
-  // generate a cube-map texture to hold all the sides
-  glActiveTexture(GL_TEXTURE1);
-  glGenTextures(1, tex_cube);
+    const char* front,
+    const char* back,
+    const char* top,
+    const char* bottom,
+    const char* left,
+    const char* right,
+    GLuint* tex_cube) {
+    // generate a cube-map texture to hold all the sides
+    glActiveTexture(GL_TEXTURE1);
+    glGenTextures(1, tex_cube);
 
-  // load each image and copy into a side of the cube-map texture
-  load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, front);
-  load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_POSITIVE_Z, back);
-  load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_POSITIVE_Y, top);
-  load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, bottom);
-  load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, left);
-  load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_POSITIVE_X, right);
-  // format cube map texture
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    // load each image and copy into a side of the cube-map texture
+    load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, front);
+    load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_POSITIVE_Z, back);
+    load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_POSITIVE_Y, top);
+    load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, bottom);
+    load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, left);
+    load_cube_map_side(*tex_cube, GL_TEXTURE_CUBE_MAP_POSITIVE_X, right);
+      // format cube map texture
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
-bool Realtime::load_cube_map_side(
-  GLuint texture, GLenum side_target, const char* file_name) {
-  glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+bool Realtime::load_cube_map_side(GLuint texture, GLenum side_target, const char* file_name) {
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 
-  int x, y, n;
-  int force_channels = 4;
-  unsigned char*  image_data = stbi_load(
-    file_name, &x, &y, &n, force_channels);
-  if (!image_data) {
-    fprintf(stderr, "ERROR: could not load %s\n", file_name);
-    return false;
-  }
-  // non-power-of-2 dimensions check
-  if ((x & (x - 1)) != 0 || (y & (y - 1)) != 0) {
-    fprintf(stderr,
-        "WARNING: image %s is not power-of-2 dimensions\n",
-        file_name);
-  }
+    int x, y, n;
+    int force_channels = 4;
+    unsigned char*  image_data = stbi_load(file_name, &x, &y, &n, force_channels);
+    if (!image_data) {
+      fprintf(stderr, "ERROR: could not load %s\n", file_name);
+      return false;
+    }
+    // non-power-of-2 dimensions check
+    if ((x & (x - 1)) != 0 || (y & (y - 1)) != 0) {
+      fprintf(stderr, "WARNING: image %s is not power-of-2 dimensions\n", file_name);
+    }
 
-  // copy image data into 'target' side of cube map
-  glTexImage2D(
-    side_target,
-    0,
-    GL_RGBA,
-    x,
-    y,
-    0,
-    GL_RGBA,
-    GL_UNSIGNED_BYTE,
-    image_data);
-  free(image_data);
-  return true;
+    // copy image data into 'target' side of cube map
+    glTexImage2D(side_target, 0, GL_RGBA,
+                 x, y, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+    free(image_data);
+    return true;
 }
 
 void Realtime::makeFBO() {
@@ -569,16 +418,17 @@ void Realtime::paintGL() {
     glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
     glDepthMask(GL_FALSE);
     glUseProgram(skyboxProgram);
-    glActiveTexture(GL_TEXTURE1);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
     glBindVertexArray(sky_vao);
 
-    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "viewmat"), 1, GL_FALSE, &cam.viewMat[0][0]);
-    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projmat"), 1, GL_FALSE, &cam.projMat[0][0]);
-//    glm::mat4 ctm = glm::mat4(1.0f);
-//    ctm *= glm::translate(glm::vec3(10, 10, -30));
-//    ctm *= glm::scale(glm::vec3(6,6,6));
-//    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "modelmat"), 1, GL_FALSE, &ctm[0][0]);
+
+    glm::mat4 proj = cam.projMat;
+//    glm::mat4 view = cam.viewMat;
+    glm::mat4 view = glm::mat4(glm::mat3(cam.viewMat));
+
+    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projmat"), 1, GL_FALSE, &proj[0][0]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glDepthMask(GL_TRUE);
 
@@ -639,44 +489,44 @@ void Realtime::paintGL() {
 
 
     // Render pass 1: render sun and occluding shapes to fbo texture
-//    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-//    glViewport(0, 0, m_screen_width, m_screen_height);
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    paintSun();
-//    paintGeometry(1);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glViewport(0, 0, m_screen_width, m_screen_height);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    paintSun();
+    paintGeometry(1);
 
     // Render pass 2: render shapes to default framebuffer
-//    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
-//    glViewport(0, 0, m_screen_width, m_screen_height);
-//    paintGeometry(0);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+    glViewport(0, 0, m_screen_width, m_screen_height);
+    paintGeometry(0);
 
     // Render pass 3: render shapes with sun and add rays
-//    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
-//    glViewport(0, 0, m_screen_width, m_screen_height);
-//    glEnable(GL_BLEND);
-//    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-//    glUseProgram(postpassProgram);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+    glViewport(0, 0, m_screen_width, m_screen_height);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glUseProgram(postpassProgram);
 
-//    glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0);
-//    glm::vec4 sunPos = glm::vec4(0, 0, -10, 1.0);
-//    sunPos = sunPos * cam.viewMat;
-//    sunPos = sunPos * cam.projMat;
-////    sunPos = sunPos * (1.f / sunPos[3]);
-//    sunPos = sunPos + glm::vec4(1.0, 1.0, 0.0, 0.0);
-//    sunPos = sunPos * 0.5f;
-//    glm::vec2 sun = glm::vec2(sunPos[0], sunPos[1]);
+    glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0);
+    glm::vec4 sunPos = glm::vec4(0, 0, -10, 1.0);
+    sunPos = sunPos * cam.viewMat;
+    sunPos = sunPos * cam.projMat;
+//    sunPos = sunPos * (1.f / sunPos[3]);
+    sunPos = sunPos + glm::vec4(1.0, 1.0, 0.0, 0.0);
+    sunPos = sunPos * 0.5f;
+    glm::vec2 sun = glm::vec2(sunPos[0], sunPos[1]);
 
-//    glUniform2fv(glGetUniformLocation(postpassProgram, "sunPos"), 1, &sun[0]);
+    glUniform2fv(glGetUniformLocation(postpassProgram, "sunPos"), 1, &sun[0]);
 
-//    glBindVertexArray(m_fullscreen_vao);
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
-//    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(m_fullscreen_vao);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 
-//    glBindTexture(GL_TEXTURE_2D, 0);
-//    glBindVertexArray(0);
-//    glUseProgram(0);
-//    glDisable(GL_BLEND);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindVertexArray(0);
+    glUseProgram(0);
+    glDisable(GL_BLEND);
 
 
 
