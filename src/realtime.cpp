@@ -203,7 +203,7 @@ void Realtime::create_cube_map(
     const char* right,
     GLuint* tex_cube) {
     // generate a cube-map texture to hold all the sides
-    glActiveTexture(GL_TEXTURE1);
+    glActiveTexture(GL_TEXTURE0);
     glGenTextures(1, tex_cube);
 
     // load each image and copy into a side of the cube-map texture
@@ -222,7 +222,7 @@ void Realtime::create_cube_map(
 }
 
 bool Realtime::load_cube_map_side(GLuint texture, GLenum side_target, const char* file_name) {
-    glActiveTexture(GL_TEXTURE1);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 
     int x, y, n;
@@ -415,22 +415,21 @@ void Realtime::paintSun() {
 void Realtime::paintGL() {
     // Students: anything requiring OpenGL calls every frame should be done here
 
-    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
-    glDepthMask(GL_FALSE);
-    glUseProgram(skyboxProgram);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-    glBindVertexArray(sky_vao);
-
-
     glm::mat4 proj = cam.projMat;
 //    glm::mat4 view = cam.viewMat;
     glm::mat4 view = glm::mat4(glm::mat3(cam.viewMat));
 
-    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
-    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projmat"), 1, GL_FALSE, &proj[0][0]);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glDepthMask(GL_TRUE);
+//    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+//    glDepthMask(GL_FALSE);
+//    glUseProgram(skyboxProgram);
+//    glActiveTexture(GL_TEXTURE0);
+//    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+//    glBindVertexArray(sky_vao);
+
+//    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
+//    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projmat"), 1, GL_FALSE, &proj[0][0]);
+//    glDrawArrays(GL_TRIANGLES, 0, 36);
+//    glDepthMask(GL_TRUE);
 
     // Render pass 1: render sun and occluding shapes to fbo texture
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
@@ -445,15 +444,19 @@ void Realtime::paintGL() {
     paintGeometry(0);
 
     // Render pass 3: render shapes with sun and add rays
+    glDepthMask(GL_TRUE);
+    glEnable(GL_BLEND);
+//    glBlendFunc(GL_SRC_ALPHA, GL_ONE); // no longer blending - not drawing shapes in front anymore ?
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
     glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
     glViewport(0, 0, m_screen_width, m_screen_height);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
     glUseProgram(postpassProgram);
 
     glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0);
-    glm::vec4 sunPos = glm::vec4(0, 0, -10, 1.0);
-    sunPos = sunPos * cam.viewMat;
+    glm::vec4 sunPos = glm::vec4(0, 0, -40, 1.0);
+    sunPos = sunPos * view;
     sunPos = sunPos * cam.projMat;
 //    sunPos = sunPos * (1.f / sunPos[3]);
     sunPos = sunPos + glm::vec4(1.0, 1.0, 0.0, 0.0);
@@ -470,7 +473,8 @@ void Realtime::paintGL() {
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
     glUseProgram(0);
-    glDisable(GL_BLEND);
+
+//    glDisable(GL_BLEND);
 }
 
 void Realtime::resizeGL(int w, int h) {
@@ -629,16 +633,16 @@ void Realtime::timerEvent(QTimerEvent *event) {
                  val0, val1, val2, 1);
         cam.updateTranslation(translate);
     }
-//    if (m_keyMap.at(Qt::Key_Control) ) {
-//        float val0 = 0.0f * deltaTime;
-//        float val1 = -1.0f * deltaTime;
-//        float val2 = 0.0f * deltaTime;
-//        glm::mat4 translate = glm::mat4(1, 0, 0, 0,
-//                 0, 1, 0 ,0,
-//                 0, 0, 1, 0,
-//                 val0, val1, val2, 1);
-//        cam.updateTranslation(translate);
-//    }
+    if (m_keyMap.at(Qt::Key_Control) ) {
+        float val0 = 0.0f * deltaTime;
+        float val1 = -1.0f * deltaTime;
+        float val2 = 0.0f * deltaTime;
+        glm::mat4 translate = glm::mat4(1, 0, 0, 0,
+                 0, 1, 0 ,0,
+                 0, 0, 1, 0,
+                 val0, val1, val2, 1);
+        cam.updateTranslation(translate);
+    }
 
     update(); // asks for a PaintGL() call to occur
 }
