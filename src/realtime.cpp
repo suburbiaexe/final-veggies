@@ -731,6 +731,8 @@ void Realtime::sceneChanged() {
     bezFlag = false;
     bezT = 1;
 
+    settingsChanged();
+
     update(); // asks for a PaintGL() call to occur
 }
 
