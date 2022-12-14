@@ -64,6 +64,7 @@ private:
     GLuint colorProgram;
     GLuint postpassProgram;
     GLuint skyboxProgram;
+    GLuint terrainProgram;
 
     Camera cam;
     RenderData metaData;
@@ -99,7 +100,6 @@ private:
     std::vector<GLfloat> m_coneData;
     std::vector<GLfloat> m_cylinderData;
 
-
     void makeFBO();
     void generateShapeData();
     void initializeBuffers();
@@ -126,7 +126,6 @@ private:
     glm::mat4 initialView; // sky dome view and proj basically
     glm::mat4 initialProj;
 
-
     // sky map stuff
     GLuint sky_vbo;
     GLuint sky_vao;
@@ -147,6 +146,8 @@ private:
     // terrain
     GLuint terrain_vbo;
     GLuint terrain_vao;
+    GLuint terrainTexture;
+    QImage terrainImage;
 
     // bezier stuff
     glm::vec4 interp(glm::vec4 a, glm::vec4 b, float t);
