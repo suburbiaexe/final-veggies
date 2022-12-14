@@ -214,6 +214,8 @@ void Realtime::initializeGL() {
                  GL_RGBA, GL_UNSIGNED_BYTE, image_data);
 
 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -642,40 +644,38 @@ void Realtime::paintGL() {
 
 
     // Render pass 3: render shapes with sun and add rays
-    if (settings.extraCredit4) {
         //    glDisable(GL_DEPTH_TEST);
 //            glDepthMask(GL_FALSE);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-            glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
-            glViewport(0, 0, m_screen_width, m_screen_height);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+        glViewport(0, 0, m_screen_width, m_screen_height);
 
-            glUseProgram(postpassProgram);
+        glUseProgram(postpassProgram);
 
-            glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0.0);
-            glm::vec4 sunPos = glm::vec4(0, 0, -40, 1.0);
-            sunPos = sunPos * view;
-            sunPos = sunPos * cam.projMat;
-        //    sunPos = sunPos * (1.f / sunPos[3]);
-            sunPos = sunPos + glm::vec4(1.0, 1.0, 0.0, 0.0);
-            sunPos = sunPos * 0.5f;
-            glm::vec2 sun = glm::vec2(sunPos[0], sunPos[1]);
+        glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0.0);
+        glm::vec4 sunPos = glm::vec4(0, 0, -40, 1.0);
+        sunPos = sunPos * view;
+        sunPos = sunPos * cam.projMat;
+    //    sunPos = sunPos * (1.f / sunPos[3]);
+        sunPos = sunPos + glm::vec4(1.0, 1.0, 0.0, 0.0);
+        sunPos = sunPos * 0.5f;
+        glm::vec2 sun = glm::vec2(sunPos[0], sunPos[1]);
 
-            glUniform2fv(glGetUniformLocation(postpassProgram, "sunPos"), 1, &sun[0]);
+        glUniform2fv(glGetUniformLocation(postpassProgram, "sunPos"), 1, &sun[0]);
 
-            glBindVertexArray(m_fullscreen_vao);
+        glBindVertexArray(m_fullscreen_vao);
 //            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
-    } //EXTRA CREDIT 4 NOW ENDS HERE
 
-            glBindTexture(GL_TEXTURE_2D, 0);
-            glBindVertexArray(0);
-            glUseProgram(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindVertexArray(0);
+        glUseProgram(0);
 
-            glDisable(GL_BLEND);
+        glDisable(GL_BLEND);
         //    glEnable(GL_DEPTH_TEST);
 //            glDepthMask(GL_TRUE);
 //    }  EXTRA CREDIT 4 USED TO END HERE
@@ -704,6 +704,7 @@ void Realtime::resizeGL(int w, int h) {
 }
 
 void Realtime::sceneChanged() {
+
     bool success = SceneParser::parse(settings.sceneFilePath, metaData);
 
     if (!success) {
@@ -727,8 +728,8 @@ void Realtime::sceneChanged() {
 void Realtime::settingsChanged() {
     makeCurrent();
     cam.updatePlanes(settings.nearPlane, 200);
-    int param1 = settings.shapeParameter1;
-    int param2 = settings.shapeParameter2;
+    int param1 = 25;
+    int param2 = 25;
 
     cone.updateParams(param1, param2);
     cube.updateParams(param1);

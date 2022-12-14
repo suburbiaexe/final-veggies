@@ -37,7 +37,7 @@ uniform sampler2D terrainSampler;
 void main() {
     if (terrain == 1) {
 //        fragColor = vec4(outcolor, 1);
-        fragColor = texture(terrainSampler, vec2(uv));
+        fragColor = texture(terrainSampler, vec2(uv[0], uv[2]));
 //        fragColor = vec4(1);
     } else {
         vec4 worldspacenorm = normalize(worldspacenorm);

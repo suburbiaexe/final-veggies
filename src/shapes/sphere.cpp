@@ -2,8 +2,8 @@
 
 void Sphere::updateParams(int param1, int param2) {
     m_vertexData = std::vector<float>();
-    m_param1 = std::max(2, param1);
-    m_param2 = std::max(3, param2);
+    m_param1 = 25; //std::max(2, param1);
+    m_param2 = 25; //std::max(3, param2);
     setVertexData();
 }
 
