@@ -32,6 +32,7 @@ add_executable(${PROJECT_NAME}
     src/settings.cpp
     src/utils/scenefilereader.cpp
     src/utils/sceneparser.cpp
+    src/utils/objparser.cpp
     src/camera/camera.cpp
     src/shapes/sphere.cpp
     src/shapes/cube.cpp
@@ -47,6 +48,7 @@ add_executable(${PROJECT_NAME}
     src/utils/scenedata.h
     src/utils/scenefilereader.h
     src/utils/sceneparser.h
+    src/utils/objparser.h
     src/utils/shaderloader.h
     src/camera/camera.h
     src/shapes/sphere.h
@@ -83,6 +85,8 @@ qt6_add_resources(${PROJECT_NAME} "Resources"
         resources/shaders/color.frag
         resources/shaders/postpass.frag
         resources/shaders/postpass.vert
+        resources/veggie_objects/Bob_The_Tomato_no_uvs.obj
+        resources/veggie_objects/test_polygon.obj
 )
 
 # GLEW: this provides support for Windows (including 64-bit)
