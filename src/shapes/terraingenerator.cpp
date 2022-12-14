@@ -222,6 +222,8 @@ float TerrainGenerator::getHeight(float x, float y) {
         mid += modifier*computePerlin(x * 1, y * 1) / 1;
     }
 
+    //mid += computePerlin(x*32, y*32) / 32.f;
+
     return mid*g;
 }
 

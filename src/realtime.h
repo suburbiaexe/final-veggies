@@ -145,6 +145,7 @@ private:
     GLuint terrain_vbo;
     GLuint terrain_vao;
     GLuint terrainTexture;
+    GLuint rockyTexture;
 
 
     // bezier stuff

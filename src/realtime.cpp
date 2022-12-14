@@ -200,6 +200,7 @@ void Realtime::initializeGL() {
 
 
     // texture
+
     std::string terrainpath = parentDir + "/final-veggies/resources/texture_mountain.jpg";
     int x, y, n;
     int force_channels = 4;
@@ -208,7 +209,59 @@ void Realtime::initializeGL() {
       fprintf(stderr, "ERROR: could not load %s\n", terrainpath.c_str());
     }
 
+//    std::string mountainpath = parentDir + "/final-veggies/resources/texture_rocky.jpg";
+//    int u, v, m;
+//    unsigned char* rocky_data = stbi_load(mountainpath.c_str(), &u, &v, &m, force_channels);
+//    if (!rocky_data) {
+//      fprintf(stderr, "ERROR: could not load %s\n", mountainpath.c_str());
+//    }
+
+    glGenTextures(1, &terrainTexture);
+//    glActiveTexture(GL_TEXTURE0 + 0);
     glBindTexture(GL_TEXTURE_2D, terrainTexture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                 x, y, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+
+//    glBindTexture(GL_TEXTURE_2D, 0);
+
+//    glGenTextures(1, &rockyTexture);
+////    glActiveTexture(GL_TEXTURE0 + 1);
+//    glBindTexture(GL_TEXTURE_2D, rockyTexture);
+//    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+//                 u, v, 0,
+//                 GL_RGBA, GL_UNSIGNED_BYTE, rocky_data);
+
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glUseProgram(phongProgram);
+    glUniform1i(glGetUniformLocation(phongProgram, "snowtexture"), 0);
+//    glUniform1i(glGetUniformLocation(phongProgram, "rocktexture"), 1);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    stbi_image_free(image_data);
+//    stbi_image_free(rocky_data);
+//    glActiveTexture(GL_TEXTURE0);
+
+
+    /*
+    GLuint textures[2];
+    glGenTextures(2, textures);
+
+    GLint texLoc = glGetUniformLocation(phongProgram, "textureSampler");
+    glUniform1i(texLoc, 1);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textures[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
                  x, y, 0,
                  GL_RGBA, GL_UNSIGNED_BYTE, image_data);
@@ -218,9 +271,24 @@ void Realtime::initializeGL() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glUniform1i(glGetUniformLocation(phongProgram, "terrainSampler"), 0);
+    glUniform1i(glGetUniformLocation(phongProgram, "snowtexture"), 0);
+
     stbi_image_free(image_data);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, textures[1]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                 u, v, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, rocky_data);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glUniform1i(glGetUniformLocation(phongProgram, "rocktexture"), 0);
+
+    stbi_image_free(rocky_data);*/
+
+    glUseProgram(0);
 
     //TOMATO STUFF
     objParser objParse;
@@ -542,6 +610,7 @@ void Realtime::paintGeometry(int pass) {
             if (shape.primitive.type == PrimitiveType::PRIMITIVE_CONE) {
                 terrain = 1;
             }
+
             glUniform1i(glGetUniformLocation(phongProgram, "terrain"), terrain);
             invTransposeModel = inverse(transpose(glm::mat3(ctm)));
             glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &invTransposeModel[0][0]);
@@ -556,11 +625,19 @@ void Realtime::paintGeometry(int pass) {
             glUniform1f(glGetUniformLocation(phongProgram, "shininess"), shape.primitive.material.shininess);
 
             PrimitiveType type = shape.primitive.type;
+            glActiveTexture(GL_TEXTURE0);
+//            glBindTexture(GL_TEXTURE_2D, rockyTexture);
+//            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, terrainTexture);
+            glUseProgram(phongProgram);
             bindDraw(type);
 
 
         }
         glUniform1i(glGetUniformLocation(phongProgram, "terrain"), 0);
+
+        //float h = terrain.getHeight(0.f, 0.f);
+
         glm::mat4 transformationMat = glm::translate(glm::vec3(0,-1,0))*glm::scale(glm::vec3(0.1,0.1,0.1));
         drawTomato(viewMat, projMat, transformationMat);
 //        transformationMat = glm::translate(glm::vec3(0,1,0))*glm::rotate(180.f, glm::vec3(0,1,0))*glm::scale(glm::vec3(0.1,0.1,0.1));
@@ -657,7 +734,10 @@ void Realtime::paintGL() {
 
         glUseProgram(postpassProgram);
 
-        glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0.0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
+
+//        glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0.0);
         glm::vec4 sunPos = glm::vec4(0, 0, -40, 1.0);
         sunPos = sunPos * view;
         sunPos = sunPos * cam.projMat;

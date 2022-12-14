@@ -16,6 +16,10 @@ public:
     void generateTerrain();
     void insertVec3(std::vector<float> &data, glm::vec3 v);
     std::vector<float> generateShape() { return m_vertexData; }
+    float seed;
+    // Takes a normalized (x, y) position, in range [0,1)
+    // Returns a height value, z, by sampling a noise function
+    float getHeight(float x, float y);
 
 private:
 
@@ -46,10 +50,6 @@ private:
     glm::vec3 getPosition(int row, int col);
 
     // ================== Students, please focus on the code below this point
-
-    // Takes a normalized (x, y) position, in range [0,1)
-    // Returns a height value, z, by sampling a noise function
-    float getHeight(float x, float y);
 
     // Computes the normal of a vertex by averaging neighbors
     glm::vec3 getNormal(int row, int col);
