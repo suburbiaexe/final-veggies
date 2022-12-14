@@ -36,8 +36,6 @@ void main() {
     if (terrain == 1) {
         fragColor = vec4(outcolor, 1);
     } else {
-
-
         vec4 worldspacenorm = normalize(worldspacenorm);
 
         fragColor = vec4(0.0);

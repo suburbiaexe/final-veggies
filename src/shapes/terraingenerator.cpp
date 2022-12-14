@@ -84,18 +84,18 @@ void TerrainGenerator::generateTerrain() {
             // x2y2z3
             insertVec3(m_vertexData, p1);
             insertVec3(m_vertexData, n1);
-            insertVec3(m_vertexData, getColor(n1, p1));
-//            insertVec3(m_vertexData, glm::vec3(1.0f));
+//            insertVec3(m_vertexData, getColor(n1, p1));
+            insertVec3(m_vertexData, glm::vec3(1.0f));
 
             insertVec3(m_vertexData, p3);
             insertVec3(m_vertexData, n3);
-            insertVec3(m_vertexData, getColor(n2, p2));
-//            insertVec3(m_vertexData, glm::vec3(1.0f));
+//            insertVec3(m_vertexData, getColor(n2, p2));
+            insertVec3(m_vertexData, glm::vec3(1.0f));
 
             insertVec3(m_vertexData, p2);
             insertVec3(m_vertexData, n2);
-            insertVec3(m_vertexData, getColor(n3, p3));
-//            insertVec3(m_vertexData, glm::vec3(1.0f));
+//            insertVec3(m_vertexData, getColor(n3, p3));
+            insertVec3(m_vertexData, glm::vec3(1.0f));
 
             // tris 2
             // x1y1z1
@@ -103,18 +103,18 @@ void TerrainGenerator::generateTerrain() {
             // x1y2z4
             insertVec3(m_vertexData, p1);
             insertVec3(m_vertexData, n1);
-            insertVec3(m_vertexData, getColor(n1, p1));
-//            insertVec3(m_vertexData, glm::vec3(1.0f));
+//            insertVec3(m_vertexData, getColor(n1, p1));
+            insertVec3(m_vertexData, glm::vec3(1.0f));
 
             insertVec3(m_vertexData, p4);
             insertVec3(m_vertexData, n4);
-            insertVec3(m_vertexData, getColor(n3, p3));
-//            insertVec3(m_vertexData, glm::vec3(1.0f));
+//            insertVec3(m_vertexData, getColor(n3, p3));
+            insertVec3(m_vertexData, glm::vec3(1.0f));
 
             insertVec3(m_vertexData, p3);
             insertVec3(m_vertexData, n3);
-            insertVec3(m_vertexData, getColor(n4, p4));
-//            insertVec3(m_vertexData, glm::vec3(1.0f));
+//            insertVec3(m_vertexData, getColor(n4, p4));
+            insertVec3(m_vertexData, glm::vec3(1.0f));
         }
     }
     //m_vertexData = verts;
@@ -261,14 +261,20 @@ glm::vec3 TerrainGenerator::getNormal(int row, int col) {
 // Computes color of vertex using normal and, optionally, position
 glm::vec3 TerrainGenerator::getColor(glm::vec3 normal, glm::vec3 position) {
 
-    int u = (position[0]/2.f)*m_image.width();
-    int v = (position[1]/2.f)*m_image.height();
+//    int u = (position[0]/2.f)*m_image.width();
+//    int v = (position[1]/2.f)*m_image.height();
 
-    QColor pix(m_image.pixel(u, v));
+//    QColor pix(m_image.pixel(u, v));
 
-    glm::vec3 out{float(pix.red())/255.f, float(pix.green())/255.f, float(pix.blue())/255.f};
+//    glm::vec3 out{float(pix.red())/255.f, float(pix.green())/255.f, float(pix.blue())/255.f};
 
-    return out;
+//    return out;
+
+//    if (position[2] < 2.5) {
+//        return glm::vec3(1,1,1);
+//    } else {
+//        return glm::vec3(0.5,0.5,0.5);
+//    }
 }
 
 // Computes the intensity of Perlin noise at some point

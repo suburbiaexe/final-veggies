@@ -194,6 +194,160 @@ void Realtime::initializeGL() {
                     left.c_str(),
                     right.c_str(),
                     &cubemapTexture);
+
+
+    //TOMATO STUFF
+    objParser objParse;
+//    std::cout<<"before parse tomato" << std::endl;
+    std::vector<std::vector<float>> tomatoVerteces = objParse.parse_tomato();
+//    std::cout <<"after parse tomato" << std::endl;
+    //mat006 - verteces[0]
+    glGenBuffers(1, &tomato_material6_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, tomato_material6_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*tomatoVerteces[0].size(), tomatoVerteces[0].data(), GL_STATIC_DRAW);
+    glGenVertexArrays(1, &tomato_material6_vao);
+    glBindVertexArray(tomato_material6_vao);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), reinterpret_cast<void*>(3*sizeof(GLfloat)));
+    //stem-green - verteces[1]
+    glGenBuffers(1, &tomato_stem_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, tomato_stem_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*tomatoVerteces[1].size(), tomatoVerteces[1].data(), GL_STATIC_DRAW);
+    glGenVertexArrays(1, &tomato_stem_vao);
+    glBindVertexArray(tomato_stem_vao);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), reinterpret_cast<void*>(3*sizeof(GLfloat)));
+    //mat005 - verteces[2]
+    glGenBuffers(1, &tomato_material5_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, tomato_material5_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*tomatoVerteces[2].size(), tomatoVerteces[2].data(), GL_STATIC_DRAW);
+    glGenVertexArrays(1, &tomato_material5_vao);
+    glBindVertexArray(tomato_material5_vao);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), reinterpret_cast<void*>(3*sizeof(GLfloat)));
+    //blue_eyelids - verteces[3]
+    glGenBuffers(1, &tomato_blue_eyelids_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, tomato_blue_eyelids_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*tomatoVerteces[3].size(), tomatoVerteces[3].data(), GL_STATIC_DRAW);
+    glGenVertexArrays(1, &tomato_blue_eyelids_vao);
+    glBindVertexArray(tomato_blue_eyelids_vao);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), reinterpret_cast<void*>(3*sizeof(GLfloat)));
+    //blue_eyelids2 - verteces[4]
+    glGenBuffers(1, &tomato_blue_eyelids2_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, tomato_blue_eyelids2_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*tomatoVerteces[4].size(), tomatoVerteces[4].data(), GL_STATIC_DRAW);
+    glGenVertexArrays(1, &tomato_blue_eyelids2_vao);
+    glBindVertexArray(tomato_blue_eyelids2_vao);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), reinterpret_cast<void*>(3*sizeof(GLfloat)));
+    //eye - verteces[5]
+    glGenBuffers(1, &tomato_eye_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, tomato_eye_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*tomatoVerteces[5].size(), tomatoVerteces[5].data(), GL_STATIC_DRAW);
+    glGenVertexArrays(1, &tomato_eye_vao);
+    glBindVertexArray(tomato_eye_vao);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), reinterpret_cast<void*>(3*sizeof(GLfloat)));
+    //pupil - verteces[6]
+    glGenBuffers(1, &tomato_pupil1_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, tomato_pupil1_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*tomatoVerteces[6].size(), tomatoVerteces[6].data(), GL_STATIC_DRAW);
+    glGenVertexArrays(1, &tomato_pupil1_vao);
+    glBindVertexArray(tomato_pupil1_vao);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), reinterpret_cast<void*>(3*sizeof(GLfloat)));
+    //eye2 - verteces[7]
+    glGenBuffers(1, &tomato_eye2_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, tomato_eye2_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*tomatoVerteces[7].size(), tomatoVerteces[7].data(), GL_STATIC_DRAW);
+    glGenVertexArrays(1, &tomato_eye2_vao);
+    glBindVertexArray(tomato_eye2_vao);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), reinterpret_cast<void*>(3*sizeof(GLfloat)));
+    //pupil2 - verteces[8]
+    glGenBuffers(1, &tomato_pupil2_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, tomato_pupil2_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*tomatoVerteces[8].size(), tomatoVerteces[8].data(), GL_STATIC_DRAW);
+    glGenVertexArrays(1, &tomato_pupil2_vao);
+    glBindVertexArray(tomato_pupil2_vao);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), reinterpret_cast<void*>(3*sizeof(GLfloat)));
+    //blue_eyelid3 - verteces[9]
+    glGenBuffers(1, &tomato_blue_eyelids3_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, tomato_blue_eyelids3_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*tomatoVerteces[9].size(), tomatoVerteces[9].data(), GL_STATIC_DRAW);
+    glGenVertexArrays(1, &tomato_blue_eyelids3_vao);
+    glBindVertexArray(tomato_blue_eyelids3_vao);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), reinterpret_cast<void*>(3*sizeof(GLfloat)));
+    //blue_eyelid4 - verteces[10]
+    glGenBuffers(1, &tomato_blue_eyelids4_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, tomato_blue_eyelids4_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*tomatoVerteces[10].size(), tomatoVerteces[10].data(), GL_STATIC_DRAW);
+    glGenVertexArrays(1, &tomato_blue_eyelids4_vao);
+    glBindVertexArray(tomato_blue_eyelids4_vao);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), reinterpret_cast<void*>(3*sizeof(GLfloat)));
+    //material4 - verteces[11]
+    glGenBuffers(1, &tomato_material4_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, tomato_material4_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*tomatoVerteces[11].size(), tomatoVerteces[11].data(), GL_STATIC_DRAW);
+    glGenVertexArrays(1, &tomato_material4_vao);
+    glBindVertexArray(tomato_material4_vao);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), reinterpret_cast<void*>(3*sizeof(GLfloat)));
+    //material - verteces[12]
+    glGenBuffers(1, &tomato_material_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, tomato_material_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*tomatoVerteces[12].size(), tomatoVerteces[12].data(), GL_STATIC_DRAW);
+    glGenVertexArrays(1, &tomato_material_vao);
+    glBindVertexArray(tomato_material_vao);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), reinterpret_cast<void*>(3*sizeof(GLfloat)));
+
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    tomato_material6_size = tomatoVerteces[0].size();
+    tomato_stem_size = tomatoVerteces[1].size();
+    tomato_material5_size = tomatoVerteces[2].size();
+    tomato_blue_eyelids_size = tomatoVerteces[3].size();
+    tomato_blue_eyelids2_size = tomatoVerteces[4].size();
+    tomato_eye_size = tomatoVerteces[5].size();
+    tomato_pupil1_size = tomatoVerteces[6].size();
+    tomato_eye2_size = tomatoVerteces[7].size();
+    tomato_pupil2_size = tomatoVerteces[8].size();
+    tomato_blue_eyelids3_size = tomatoVerteces[9].size();
+    tomato_blue_eyelids4_size = tomatoVerteces[10].size();
+    tomato_material4_size = tomatoVerteces[11].size();
+    tomato_material_size = tomatoVerteces[12].size();
 }
 
 /******************************cube + sky map*****************************/
@@ -380,6 +534,8 @@ void Realtime::paintGeometry(int pass) {
             PrimitiveType type = shape.primitive.type;
             bindDraw(type);
         }
+        glUniform1i(glGetUniformLocation(phongProgram, "terrain"), 0);
+        drawTomato(viewMat, projMat);
 
     }
     glBindVertexArray(0);
@@ -431,18 +587,20 @@ void Realtime::paintGL() {
     glm::mat4 proj = cam.projMat;
     glm::mat4 view = glm::mat4(glm::mat3(cam.viewMat));
 
-    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
-    glDepthMask(GL_FALSE);
-    glUseProgram(skyboxProgram);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-    glBindVertexArray(sky_vao);
+    if (settings.extraCredit1) {
+        glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+        glDepthMask(GL_FALSE);
+        glUseProgram(skyboxProgram);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+        glBindVertexArray(sky_vao);
 
-    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
-    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projmat"), 1, GL_FALSE, &proj[0][0]);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+        glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
+        glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projmat"), 1, GL_FALSE, &proj[0][0]);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    glDepthMask(GL_TRUE);
+        glDepthMask(GL_TRUE);
+    }
 
     // Render pass 1: render sun and occluding shapes to fbo texture
 
@@ -458,41 +616,46 @@ void Realtime::paintGL() {
     glViewport(0, 0, m_screen_width, m_screen_height);
     paintGeometry(0);
 
+
     // Render pass 3: render shapes with sun and add rays
+    if (settings.extraCredit4) {
+        //    glDisable(GL_DEPTH_TEST);
+//            glDepthMask(GL_FALSE);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-////    glDisable(GL_DEPTH_TEST);
-//    glDepthMask(GL_FALSE);
-//    glEnable(GL_BLEND);
-//    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+            glViewport(0, 0, m_screen_width, m_screen_height);
 
-//    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
-//    glViewport(0, 0, m_screen_width, m_screen_height);
+            glUseProgram(postpassProgram);
 
-//    glUseProgram(postpassProgram);
+            glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0.0);
+            glm::vec4 sunPos = glm::vec4(0, 0, -40, 1.0);
+            sunPos = sunPos * view;
+            sunPos = sunPos * cam.projMat;
+        //    sunPos = sunPos * (1.f / sunPos[3]);
+            sunPos = sunPos + glm::vec4(1.0, 1.0, 0.0, 0.0);
+            sunPos = sunPos * 0.5f;
+            glm::vec2 sun = glm::vec2(sunPos[0], sunPos[1]);
 
-//    glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0.0);
-//    glm::vec4 sunPos = glm::vec4(0, 0, -40, 1.0);
-//    sunPos = sunPos * view;
-//    sunPos = sunPos * cam.projMat;
-////    sunPos = sunPos * (1.f / sunPos[3]);
-//    sunPos = sunPos + glm::vec4(1.0, 1.0, 0.0, 0.0);
-//    sunPos = sunPos * 0.5f;
-//    glm::vec2 sun = glm::vec2(sunPos[0], sunPos[1]);
+            glUniform2fv(glGetUniformLocation(postpassProgram, "sunPos"), 1, &sun[0]);
 
-//    glUniform2fv(glGetUniformLocation(postpassProgram, "sunPos"), 1, &sun[0]);
+            glBindVertexArray(m_fullscreen_vao);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
 
-//    glBindVertexArray(m_fullscreen_vao);
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
-//    glDrawArrays(GL_TRIANGLES, 0, 6);
+    } //EXTRA CREDIT 4 NOW ENDS HERE
 
-//    glBindTexture(GL_TEXTURE_2D, 0);
-//    glBindVertexArray(0);
-//    glUseProgram(0);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0);
+            glUseProgram(0);
 
-//    glDisable(GL_BLEND);
-////    glEnable(GL_DEPTH_TEST);
-//    glDepthMask(GL_TRUE);
+            glDisable(GL_BLEND);
+        //    glEnable(GL_DEPTH_TEST);
+//            glDepthMask(GL_TRUE);
+//    }  EXTRA CREDIT 4 USED TO END HERE
+
 
 }
 

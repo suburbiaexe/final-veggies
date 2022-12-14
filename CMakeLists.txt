@@ -40,6 +40,7 @@ add_executable(${PROJECT_NAME}
     src/shapes/triangle.cpp
     src/pipeline.cpp
     src/shapes/terraingenerator.cpp
+    src/utils/objparser.cpp
 
     src/shapes/sphere.cpp
     src/mainwindow.h
@@ -57,7 +58,7 @@ add_executable(${PROJECT_NAME}
     src/shapes/cylinder.h
     src/shapes/triangle.h
     src/stb_image.h
-
+    src/utils/objparser.h
 )
 
 # GLM: this creates its library and allows you to `#include "glm/..."`
