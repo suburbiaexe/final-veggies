@@ -16,6 +16,7 @@
 #include "utils/shaderloader.h"
 #include "utils/sceneparser.h"
 #include "camera/camera.h"
+#include "utils/objparser.h"
 
 #include "shapes/cone.h"
 #include "shapes/cube.h"
@@ -114,7 +115,6 @@ private:
     GLuint m_fullscreen_vbo;
     GLuint m_fullscreen_vao;
 
-
     GLuint m_fbo;
     GLuint m_fbo_texture; // occlusion texture
     GLuint m_fbo_renderbuffer;
@@ -157,9 +157,48 @@ private:
     glm::vec4 bezB;
     glm::vec4 bezC;
     glm::vec4 bezD;
-
     float bezT;
     bool bezFlag;
 
-
+    // bob the tomato !!!
+    GLuint tomato_blue_eyelids_vbo;
+    GLuint tomato_blue_eyelids_vao;
+    GLuint tomato_blue_eyelids2_vbo;
+    GLuint tomato_blue_eyelids2_vao;
+    GLuint tomato_blue_eyelids3_vbo;
+    GLuint tomato_blue_eyelids3_vao;
+    GLuint tomato_blue_eyelids4_vbo;
+    GLuint tomato_blue_eyelids4_vao;
+    GLuint tomato_eye_vbo;
+    GLuint tomato_eye_vao;
+    GLuint tomato_eye2_vbo;
+    GLuint tomato_eye2_vao;
+    GLuint tomato_material_vbo;
+    GLuint tomato_material_vao;
+    GLuint tomato_material4_vbo;
+    GLuint tomato_material4_vao;
+    GLuint tomato_material5_vbo;
+    GLuint tomato_material5_vao;
+    GLuint tomato_material6_vbo;
+    GLuint tomato_material6_vao;
+    GLuint tomato_pupil1_vbo;
+    GLuint tomato_pupil1_vao;
+    GLuint tomato_pupil2_vbo;
+    GLuint tomato_pupil2_vao;
+    GLuint tomato_stem_vbo;
+    GLuint tomato_stem_vao;
+    int tomato_blue_eyelids_size;
+    int tomato_blue_eyelids2_size;
+    int tomato_blue_eyelids3_size;
+    int tomato_blue_eyelids4_size;
+    int tomato_eye_size;
+    int tomato_eye2_size;
+    int tomato_material_size;
+    int tomato_material4_size;
+    int tomato_material5_size;
+    int tomato_material6_size;
+    int tomato_pupil1_size;
+    int tomato_pupil2_size;
+    int tomato_stem_size;
+    void drawTomato(glm::mat4 viewM, glm::mat4 projM);
 };
