@@ -2,6 +2,7 @@
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
+layout (location = 2) in vec3 color;
 
 out vec4 worldspacepos;
 out vec4 worldspacenorm;
@@ -12,7 +13,10 @@ uniform mat4 projmat;
 uniform mat3 invTransposeModel;
 uniform float sun;
 
+out vec3 outcolor;
+
 void main() {
+   outcolor = color;
    worldspacepos = modelmat * vec4(position, 1.0);
    worldspacenorm = vec4(invTransposeModel * normal, 0.0);
 
