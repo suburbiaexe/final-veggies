@@ -32,12 +32,26 @@ uniform int terrain;
 
 in vec3 uv;
 
-uniform sampler2D terrainSampler;
+//uniform sampler2D rocktexture;
+uniform sampler2D snowtexture;
+//uniform sampler2D textureSampler[2];
+
+
+//layout(binding = 0) uniform sampler2D rocktexture;
+//layout(binding = 1) uniform sampler2D snowtexture;
 
 void main() {
     if (terrain == 1) {
 //        fragColor = vec4(outcolor, 1);
-        fragColor = texture(terrainSampler, vec2(uv[0], uv[2]));
+        fragColor = texture(snowtexture, vec2(uv[0], uv[2]));
+//        if (uv[1] < 0.04) {
+//            fragColor = texture(snowtexture, vec2(uv[0], uv[2]));
+//        } else if (uv[1] < 0.1  && uv[1] > 0.04) {
+//            fragColor = mix(texture(snowtexture, vec2(uv[0], uv[2])), texture(rocktexture, vec2(uv[0], uv[2])), 0.5);
+//        } else {
+//            fragColor = texture(rocktexture, vec2(uv[0], uv[2]));
+//        }
+//        fragColor = mix(texture(snowtexture, vec2(uv[0], uv[2])), texture(rocktexture, vec2(uv[0], uv[2])), uv[1]-0.5);
 //        fragColor = vec4(1);
     } else {
         vec4 worldspacenorm = normalize(worldspacenorm);
