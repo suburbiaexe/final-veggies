@@ -182,14 +182,14 @@ void Realtime::initializeGL() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
     std::string parentDir = (fs::current_path().fs::path::parent_path()).string();
-    parentDir = parentDir + "/final-veggies/resources/skybox/";
+    std::string skyboxpath = parentDir + "/final-veggies/resources/skybox/";
 
-    std::string front = parentDir+ "front.jpg";
-    std::string back = parentDir+ "back.jpg";
-    std::string top = parentDir+ "top.jpg";
-    std::string bottom = parentDir+ "bottom.jpg";
-    std::string left = parentDir+ "left.jpg";
-    std::string right = parentDir+ "right.jpg";
+    std::string front = skyboxpath+ "front.jpg";
+    std::string back = skyboxpath+ "back.jpg";
+    std::string top = skyboxpath+ "top.jpg";
+    std::string bottom = skyboxpath+ "bottom.jpg";
+    std::string left = skyboxpath+ "left.jpg";
+    std::string right = skyboxpath+ "right.jpg";
     create_cube_map(front.c_str(),
                     back.c_str(),
                     top.c_str(),
@@ -197,6 +197,31 @@ void Realtime::initializeGL() {
                     left.c_str(),
                     right.c_str(),
                     &cubemapTexture);
+
+
+    // texture
+    std::string terrainpath = parentDir + "/final-veggies/resources/texture_mountain.jpg";
+//    std::string terrainpath = parentDir + "/final-veggies/resources/skybox/back.jpg";
+    int x, y, n;
+    int force_channels = 4;
+    unsigned char*  image_data = stbi_load(terrainpath.c_str(), &x, &y, &n, force_channels);
+    if (!image_data) {
+      fprintf(stderr, "ERROR: could not load %s\n", terrainpath.c_str());
+    }
+
+    glBindTexture(GL_TEXTURE_2D, terrainTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                 x, y, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+//    glUseProgram(phongProgram); // check this ???
+    glUniform1i(glGetUniformLocation(phongProgram, "terrainSampler"), 0);
+//    glUseProgram(0);
+    stbi_image_free(image_data);
 
 
     //TOMATO STUFF

@@ -144,6 +144,8 @@ private:
     // terrain
     GLuint terrain_vbo;
     GLuint terrain_vao;
+    GLuint terrainTexture;
+
 
     // bezier stuff
     glm::vec4 interp(glm::vec4 a, glm::vec4 b, float t);
