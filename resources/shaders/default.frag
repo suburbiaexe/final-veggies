@@ -30,11 +30,15 @@ uniform float innerangle[8];
 uniform float lightsize;
 uniform int terrain;
 
-in vec3 outcolor;
+in vec3 uv;
+
+uniform sampler2D terrainSampler;
 
 void main() {
     if (terrain == 1) {
-        fragColor = vec4(outcolor, 1);
+//        fragColor = vec4(outcolor, 1);
+        fragColor = texture(terrainSampler, vec2(uv[0], uv[2]));
+//        fragColor = vec4(1);
     } else {
         vec4 worldspacenorm = normalize(worldspacenorm);
 
@@ -92,6 +96,7 @@ void main() {
             fragColor +=  specular;
         }
     }
+
 
 
 

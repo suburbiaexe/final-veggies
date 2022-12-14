@@ -16,7 +16,6 @@
 #include "utils/shaderloader.h"
 #include "utils/sceneparser.h"
 #include "camera/camera.h"
-#include "utils/objparser.h"
 
 #include "shapes/cone.h"
 #include "shapes/cube.h"
@@ -99,7 +98,6 @@ private:
     std::vector<GLfloat> m_coneData;
     std::vector<GLfloat> m_cylinderData;
 
-
     void makeFBO();
     void generateShapeData();
     void initializeBuffers();
@@ -126,7 +124,6 @@ private:
     glm::mat4 initialView; // sky dome view and proj basically
     glm::mat4 initialProj;
 
-
     // sky map stuff
     GLuint sky_vbo;
     GLuint sky_vao;
@@ -147,6 +144,8 @@ private:
     // terrain
     GLuint terrain_vbo;
     GLuint terrain_vao;
+    GLuint terrainTexture;
+
 
     // bezier stuff
     glm::vec4 interp(glm::vec4 a, glm::vec4 b, float t);
@@ -200,5 +199,5 @@ private:
     int tomato_pupil1_size;
     int tomato_pupil2_size;
     int tomato_stem_size;
-    void drawTomato(glm::mat4 viewM, glm::mat4 projM);
+    void drawTomato(glm::mat4 viewM, glm::mat4 projM, glm::mat4 transformctm);
 };

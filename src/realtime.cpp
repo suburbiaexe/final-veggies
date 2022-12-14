@@ -6,6 +6,7 @@
 #include <iostream>
 #include "settings.h"
 #include "glm/gtx/transform.hpp"
+#include "utils/objparser.h"
 
 // added for skybox
 #include <filesystem>
@@ -120,9 +121,12 @@ void Realtime::initializeGL() {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<void*>(3 * sizeof(GLfloat)));
 
     glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER,0);
+
+
 
     // skybox stuff
-    glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0); // not sure if this is right?
+    glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), cubemapTexture); // not sure if this is right?
 
     glEnable(GL_TEXTURE_CUBE_MAP_EXT);
     float points[] = {
@@ -175,18 +179,17 @@ void Realtime::initializeGL() {
     glGenVertexArrays(1, &sky_vao);
     glBindVertexArray(sky_vao);
     glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, sky_vao);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
     std::string parentDir = (fs::current_path().fs::path::parent_path()).string();
-    parentDir = parentDir + "/final-veggies/resources/skybox/";
+    std::string skyboxpath = parentDir + "/final-veggies/resources/skybox/";
 
-    std::string front = parentDir+ "front.jpg";
-    std::string back = parentDir+ "back.jpg";
-    std::string top = parentDir+ "top.jpg";
-    std::string bottom = parentDir+ "bottom.jpg";
-    std::string left = parentDir+ "left.jpg";
-    std::string right = parentDir+ "right.jpg";
+    std::string front = skyboxpath+ "front.jpg";
+    std::string back = skyboxpath+ "back.jpg";
+    std::string top = skyboxpath+ "top.jpg";
+    std::string bottom = skyboxpath+ "bottom.jpg";
+    std::string left = skyboxpath+ "left.jpg";
+    std::string right = skyboxpath+ "right.jpg";
     create_cube_map(front.c_str(),
                     back.c_str(),
                     top.c_str(),
@@ -196,11 +199,32 @@ void Realtime::initializeGL() {
                     &cubemapTexture);
 
 
+    // texture
+    std::string terrainpath = parentDir + "/final-veggies/resources/texture_mountain.jpg";
+    int x, y, n;
+    int force_channels = 4;
+    unsigned char*  image_data = stbi_load(terrainpath.c_str(), &x, &y, &n, force_channels);
+    if (!image_data) {
+      fprintf(stderr, "ERROR: could not load %s\n", terrainpath.c_str());
+    }
+
+    glBindTexture(GL_TEXTURE_2D, terrainTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                 x, y, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glUniform1i(glGetUniformLocation(phongProgram, "terrainSampler"), 0);
+    stbi_image_free(image_data);
+
     //TOMATO STUFF
     objParser objParse;
-//    std::cout<<"before parse tomato" << std::endl;
     std::vector<std::vector<float>> tomatoVerteces = objParse.parse_tomato();
-//    std::cout <<"after parse tomato" << std::endl;
     //mat006 - verteces[0]
     glGenBuffers(1, &tomato_material6_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, tomato_material6_vbo);
@@ -360,7 +384,7 @@ void Realtime::create_cube_map(
     const char* right,
     GLuint* tex_cube) {
     // generate a cube-map texture to hold all the sides
-    glActiveTexture(GL_TEXTURE0);
+//    glActiveTexture(GL_TEXTURE1);
     glGenTextures(1, tex_cube);
 
     // load each image and copy into a side of the cube-map texture
@@ -379,7 +403,7 @@ void Realtime::create_cube_map(
 }
 
 bool Realtime::load_cube_map_side(GLuint texture, GLenum side_target, const char* file_name) {
-    glActiveTexture(GL_TEXTURE0);
+//    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 
     int x, y, n;
@@ -405,7 +429,7 @@ bool Realtime::load_cube_map_side(GLuint texture, GLenum side_target, const char
 /*********************************fbo*********************************/
 void Realtime::makeFBO() {
     glGenTextures(1, &m_fbo_texture);
-    glActiveTexture(GL_TEXTURE0);
+//    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
                  m_fbo_width, m_fbo_height, 0,
@@ -533,9 +557,14 @@ void Realtime::paintGeometry(int pass) {
 
             PrimitiveType type = shape.primitive.type;
             bindDraw(type);
+
+
         }
         glUniform1i(glGetUniformLocation(phongProgram, "terrain"), 0);
-        drawTomato(viewMat, projMat);
+        glm::mat4 transformationMat = glm::translate(glm::vec3(0,-1,0))*glm::scale(glm::vec3(0.1,0.1,0.1));
+        drawTomato(viewMat, projMat, transformationMat);
+//        transformationMat = glm::translate(glm::vec3(0,1,0))*glm::rotate(180.f, glm::vec3(0,1,0))*glm::scale(glm::vec3(0.1,0.1,0.1));
+//        drawTomato(viewMat, projMat, transformationMat);
 
     }
     glBindVertexArray(0);
@@ -591,7 +620,7 @@ void Realtime::paintGL() {
         glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
         glDepthMask(GL_FALSE);
         glUseProgram(skyboxProgram);
-        glActiveTexture(GL_TEXTURE0);
+//        glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
         glBindVertexArray(sky_vao);
 
@@ -618,40 +647,38 @@ void Realtime::paintGL() {
 
 
     // Render pass 3: render shapes with sun and add rays
-    if (settings.extraCredit4) {
         //    glDisable(GL_DEPTH_TEST);
 //            glDepthMask(GL_FALSE);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-            glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
-            glViewport(0, 0, m_screen_width, m_screen_height);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+        glViewport(0, 0, m_screen_width, m_screen_height);
 
-            glUseProgram(postpassProgram);
+        glUseProgram(postpassProgram);
 
-            glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0.0);
-            glm::vec4 sunPos = glm::vec4(0, 0, -40, 1.0);
-            sunPos = sunPos * view;
-            sunPos = sunPos * cam.projMat;
-        //    sunPos = sunPos * (1.f / sunPos[3]);
-            sunPos = sunPos + glm::vec4(1.0, 1.0, 0.0, 0.0);
-            sunPos = sunPos * 0.5f;
-            glm::vec2 sun = glm::vec2(sunPos[0], sunPos[1]);
+        glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0.0);
+        glm::vec4 sunPos = glm::vec4(0, 0, -40, 1.0);
+        sunPos = sunPos * view;
+        sunPos = sunPos * cam.projMat;
+    //    sunPos = sunPos * (1.f / sunPos[3]);
+        sunPos = sunPos + glm::vec4(1.0, 1.0, 0.0, 0.0);
+        sunPos = sunPos * 0.5f;
+        glm::vec2 sun = glm::vec2(sunPos[0], sunPos[1]);
 
-            glUniform2fv(glGetUniformLocation(postpassProgram, "sunPos"), 1, &sun[0]);
+        glUniform2fv(glGetUniformLocation(postpassProgram, "sunPos"), 1, &sun[0]);
 
-            glBindVertexArray(m_fullscreen_vao);
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(m_fullscreen_vao);
+//            glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
-    } //EXTRA CREDIT 4 NOW ENDS HERE
 
-            glBindTexture(GL_TEXTURE_2D, 0);
-            glBindVertexArray(0);
-            glUseProgram(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindVertexArray(0);
+        glUseProgram(0);
 
-            glDisable(GL_BLEND);
+        glDisable(GL_BLEND);
         //    glEnable(GL_DEPTH_TEST);
 //            glDepthMask(GL_TRUE);
 //    }  EXTRA CREDIT 4 USED TO END HERE
@@ -680,6 +707,7 @@ void Realtime::resizeGL(int w, int h) {
 }
 
 void Realtime::sceneChanged() {
+
     bool success = SceneParser::parse(settings.sceneFilePath, metaData);
 
     if (!success) {
@@ -703,8 +731,8 @@ void Realtime::sceneChanged() {
 void Realtime::settingsChanged() {
     makeCurrent();
     cam.updatePlanes(settings.nearPlane, 200);
-    int param1 = settings.shapeParameter1;
-    int param2 = settings.shapeParameter2;
+    int param1 = 25;
+    int param2 = 25;
 
     cone.updateParams(param1, param2);
     cube.updateParams(param1);
@@ -816,9 +844,9 @@ void Realtime::timerEvent(QTimerEvent *event) {
             }
 
             if (m_keyMap.at(Qt::Key_W)) {
-                float val0 = (float) -normalized[0] * deltaTime;
-                float val1 = (float) -normalized[1] * deltaTime;
-                float val2 = (float) -normalized[2] * deltaTime;
+                float val0 = (float) normalized[0] * deltaTime;
+                float val1 = (float) normalized[1] * deltaTime;
+                float val2 = (float) normalized[2] * deltaTime;
                 glm::mat4 translate = glm::mat4(1, 0, 0, 0,
                          0, 1, 0, 0,
                          0, 0, 1, 0,
@@ -826,9 +854,9 @@ void Realtime::timerEvent(QTimerEvent *event) {
                 cam.updateTranslation(translate);
             }
             if (m_keyMap.at(Qt::Key_S)) {
-                float val0 = (float) normalized[0] * deltaTime;
-                float val1 = (float) normalized[1] * deltaTime;
-                float val2 = (float) normalized[2] * deltaTime;
+                float val0 = (float) -normalized[0] * deltaTime;
+                float val1 = (float) -normalized[1] * deltaTime;
+                float val2 = (float) -normalized[2] * deltaTime;
                 glm::mat4 translate = glm::mat4(1, 0, 0, 0,
                          0, 1, 0 ,0,
                          0, 0, 1, 0,
@@ -836,9 +864,9 @@ void Realtime::timerEvent(QTimerEvent *event) {
                 cam.updateTranslation(translate);
             }
             if (m_keyMap.at(Qt::Key_A)) {
-                float val0 = (float) -left[0] * deltaTime;
-                float val1 = (float) -left[1] * deltaTime;
-                float val2 = (float) -left[2] * deltaTime;
+                float val0 = (float) left[0] * deltaTime;
+                float val1 = (float) left[1] * deltaTime;
+                float val2 = (float) left[2] * deltaTime;
                 glm::mat4 translate = glm::mat4(1, 0, 0, 0,
                          0, 1, 0 ,0,
                          0, 0, 1, 0,
@@ -846,9 +874,9 @@ void Realtime::timerEvent(QTimerEvent *event) {
                 cam.updateTranslation(translate);
             }
             if (m_keyMap.at(Qt::Key_D)) {
-                float val0 = (float) left[0] * deltaTime;
-                float val1 = (float) left[1] * deltaTime;
-                float val2 = (float) left[2] * deltaTime;
+                float val0 = (float) -left[0] * deltaTime;
+                float val1 = (float) -left[1] * deltaTime;
+                float val2 = (float) -left[2] * deltaTime;
                 glm::mat4 translate = glm::mat4(1, 0, 0, 0,
                          0, 1, 0 ,0,
                          0, 0, 1, 0,

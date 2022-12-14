@@ -17,6 +17,8 @@ void main()
 //    texCoords = vec3(aPos.x, aPos.y, -aPos.z);
 
     texCoords = aPos;
-    gl_Position = projmat * viewmat * vec4(aPos, 1.0); //vec4(texCoords, 1);//
+    gl_Position = projmat * viewmat * vec4(aPos, 1.0);
+
+    //vec4(texCoords, 1);//
 }
 
