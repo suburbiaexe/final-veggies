@@ -9,6 +9,9 @@
 #include <QGroupBox>
 #include <iostream>
 
+#include <filesystem>
+namespace fs = std::filesystem;
+
 void MainWindow::initialize() {
     realtime = new Realtime;
 
@@ -58,7 +61,7 @@ void MainWindow::initialize() {
 
     // Create file uploader for scene file
     uploadFile = new QPushButton();
-    uploadFile->setText(QStringLiteral("Upload Scene File"));
+    uploadFile->setText(QStringLiteral("Regenerate"));
 
     // Creates the boxes containing the parameter sliders and number boxes
     QGroupBox *p1Layout = new QGroupBox(); // horizonal slider 1 alignment
@@ -260,15 +263,19 @@ void MainWindow::onKernelBasedFilter() {
 
 void MainWindow::onUploadFile() {
     // Get abs path of scene file
-    QString configFilePath = QFileDialog::getOpenFileName(this, tr("Upload File"), QDir::homePath(), tr("Scene Files (*.xml)"));
-    if (configFilePath.isNull()) {
-        std::cout << "Failed to load null scenefile." << std::endl;
-        return;
-    }
+    //QString configFilePath = QFileDialog::getOpenFileName(this, tr("Upload File"), QDir::homePath(), tr("Scene Files (*.xml)"));
+//    if (configFilePath.isNull()) {
+//        std::cout << "Failed to load null scenefile." << std::endl;
+//        return;
+//    }
 
-    settings.sceneFilePath = configFilePath.toStdString();
+//    settings.sceneFilePath = configFilePath.toStdString();
+    std::string parentDir = (fs::current_path().fs::path::parent_path()).string();
+    std::string veggiepath = parentDir + "/final-veggies/resources/veggie.xml";
 
-    std::cout << "Loaded scenefile: \"" << configFilePath.toStdString() << "\"." << std::endl;
+    settings.sceneFilePath = veggiepath;
+
+    //std::cout << "Loaded scenefile: \"" << configFilePath.toStdString() << "\"." << std::endl;
 
     realtime->sceneChanged();
 }
