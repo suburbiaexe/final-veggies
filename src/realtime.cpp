@@ -85,6 +85,7 @@ void Realtime::initializeGL() {
     colorProgram = ShaderLoader::createShaderProgram(":/resources/shaders/default.vert", ":/resources/shaders/color.frag");
     postpassProgram = ShaderLoader::createShaderProgram(":/resources/shaders/postpass.vert", ":/resources/shaders/postpass.frag");
     skyboxProgram = ShaderLoader::createShaderProgram(":/resources/shaders/skybox.vert", ":/resources/shaders/skybox.frag");
+    textureProgram = ShaderLoader::createShaderProgram(":/resources/shaders/texture.vert", ":/resources/shaders/texture.frag");
 
     initializeBuffers();
     bindVBO();
@@ -120,6 +121,26 @@ void Realtime::initializeGL() {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<void*>(3 * sizeof(GLfloat)));
 
     glBindVertexArray(0);
+
+    GLuint terrainTexture;
+    glGenTextures(1, &terrainTexture);
+    glBindTexture(GL_TEXTURE_2D, terrainTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); //look into changing these???
+
+    QString kitten_filepath = QString("C:/Users/cport/Downloads/test_mountain_texture.jpg");
+
+    // Task 1: Obtain image from filepath
+    QImage m_image = QImage{kitten_filepath};
+
+    // Task 2: Format image to fit OpenGL
+    m_image = m_image.convertToFormat(QImage::Format_RGBA8888).mirrored();
+//    QImage image; //actually get a real image from a QString!!!
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_image.width(), m_image.height(), 0, GL_RGB, GL_UNSIGNED_BYTE, m_image.bits());
+    glBindTexture(GL_TEXTURE_2D, 0);
+
 
     // skybox stuff
     glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0); // not sure if this is right?

@@ -64,6 +64,7 @@ private:
     GLuint colorProgram;
     GLuint postpassProgram;
     GLuint skyboxProgram;
+    GLuint textureProgram;
 
     Camera cam;
     RenderData metaData;
