@@ -85,7 +85,7 @@ void Realtime::initializeGL() {
     colorProgram = ShaderLoader::createShaderProgram(":/resources/shaders/default.vert", ":/resources/shaders/color.frag");
     postpassProgram = ShaderLoader::createShaderProgram(":/resources/shaders/postpass.vert", ":/resources/shaders/postpass.frag");
     skyboxProgram = ShaderLoader::createShaderProgram(":/resources/shaders/skybox.vert", ":/resources/shaders/skybox.frag");
-    terrainProgram = ShaderLoader::createShaderProgram(":/resources/shaders/terrain.vert", ":/resources/shaders/terrain.frag");
+//    terrainProgram = ShaderLoader::createShaderProgram(":/resources/shaders/terrain.vert", ":/resources/shaders/terrain.frag");
 
     initializeBuffers();
     bindVBO();
@@ -93,24 +93,24 @@ void Realtime::initializeGL() {
     makeFBO();
 
     // terrain
-    glUniform1i(glGetUniformLocation(terrainProgram, "terrain"), 1);
+//    glUniform1i(glGetUniformLocation(terrainProgram, "terrain"), 1);
 
     // terrain
-    QString kitten_filepath = QString(":/resources/terrain_filepath.png");
-    terrainImage = QImage(kitten_filepath);
-    terrainImage = terrainImage.convertToFormat(QImage::Format_RGBA8888).mirrored();
-    glGenTextures(1, &terrainTexture);
+//    QString kitten_filepath = QString(":/resources/terrain_filepath.png");
+//    terrainImage = QImage(kitten_filepath);
+//    terrainImage = terrainImage.convertToFormat(QImage::Format_RGBA8888).mirrored();
+//    glGenTextures(1, &terrainTexture);
 //    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, terrainTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                 terrainImage.width(), terrainImage.height(), 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, terrainImage.bits());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glUseProgram(terrainProgram); // check this ???
-    glUniform1i(glGetUniformLocation(terrainProgram, "terraintexture"), 0);
-    glUseProgram(0);
+//    glBindTexture(GL_TEXTURE_2D, terrainTexture);
+//    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+//                 terrainImage.width(), terrainImage.height(), 0,
+//                 GL_RGBA, GL_UNSIGNED_BYTE, terrainImage.bits());
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//    glBindTexture(GL_TEXTURE_2D, 0);
+//    glUseProgram(terrainProgram); // check this ???
+//    glUniform1i(glGetUniformLocation(terrainProgram, "terraintexture"), 0);
+//    glUseProgram(0);
 
     std::vector<GLfloat> fullscreen_quad_data =
     { //     POSITIONS    //
@@ -140,8 +140,8 @@ void Realtime::initializeGL() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<void*>(3 * sizeof(GLfloat)));
 
-//    glBindVertexArray(0);
-//    glBindBuffer(GL_ARRAY_BUFFER,0);
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER,0);
 
 
 
@@ -221,9 +221,7 @@ void Realtime::initializeGL() {
 
     //TOMATO STUFF
     objParser objParse;
-//    std::cout<<"before parse tomato" << std::endl;
     std::vector<std::vector<float>> tomatoVerteces = objParse.parse_tomato();
-//    std::cout <<"after parse tomato" << std::endl;
     //mat006 - verteces[0]
     glGenBuffers(1, &tomato_material6_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, tomato_material6_vbo);
@@ -537,18 +535,19 @@ void Realtime::paintGeometry(int pass) {
         glm::mat4 ctm;
         for (RenderShapeData &shape : metaData.shapes) {
             ctm = shape.ctm;
-//            int terrain = 0;
+            int terrain = 0;
             if (shape.primitive.type == PrimitiveType::PRIMITIVE_CONE) {
-                glUseProgram(terrainProgram);
-                invTransposeModel = inverse(transpose(glm::mat3(ctm)));
-                glUniformMatrix3fv(glGetUniformLocation(terrainProgram, "invTransposeModel"), 1, GL_FALSE, &invTransposeModel[0][0]);
-                glUniformMatrix4fv(glGetUniformLocation(terrainProgram, "modelmat"), 1, GL_FALSE, &ctm[0][0]);
-                glUniformMatrix4fv(glGetUniformLocation(terrainProgram, "viewmat"), 1, GL_FALSE, &viewMat[0][0]);
-                glUniformMatrix4fv(glGetUniformLocation(terrainProgram, "projmat"), 1, GL_FALSE, &projMat[0][0]);
-                SceneMaterial mat = shape.primitive.material;
-                PrimitiveType type = shape.primitive.type;
-                bindDraw(type);
-                glUseProgram(phongProgram);
+                terrain = 1;
+//                glUseProgram(terrainProgram);
+//                invTransposeModel = inverse(transpose(glm::mat3(ctm)));
+//                glUniformMatrix3fv(glGetUniformLocation(terrainProgram, "invTransposeModel"), 1, GL_FALSE, &invTransposeModel[0][0]);
+//                glUniformMatrix4fv(glGetUniformLocation(terrainProgram, "modelmat"), 1, GL_FALSE, &ctm[0][0]);
+//                glUniformMatrix4fv(glGetUniformLocation(terrainProgram, "viewmat"), 1, GL_FALSE, &viewMat[0][0]);
+//                glUniformMatrix4fv(glGetUniformLocation(terrainProgram, "projmat"), 1, GL_FALSE, &projMat[0][0]);
+//                SceneMaterial mat = shape.primitive.material;
+//                PrimitiveType type = shape.primitive.type;
+//                bindDraw(type);
+//                glUseProgram(phongProgram);
 
 //                glUseProgram(terrainProgram);
 //                glBindVertexArray(terrain_vao);
@@ -564,23 +563,23 @@ void Realtime::paintGeometry(int pass) {
 //                glBindVertexArray(0);
 //                glBindTexture(GL_TEXTURE_2D, 0);
 //                glUseProgram(phongProgram);
-            } else {
-                //            glUniform1i(glGetUniformLocation(phongProgram, "terrain"), terrain);
-                invTransposeModel = inverse(transpose(glm::mat3(ctm)));
-                glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &invTransposeModel[0][0]);
-                glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &ctm[0][0]);
-                glUniformMatrix4fv(glGetUniformLocation(phongProgram, "viewmat"), 1, GL_FALSE, &viewMat[0][0]);
-                glUniformMatrix4fv(glGetUniformLocation(phongProgram, "projmat"), 1, GL_FALSE, &projMat[0][0]);
-                glUniform1f(glGetUniformLocation(colorProgram, "sun"), 0.0);
-                SceneMaterial mat = shape.primitive.material;
-                glUniform4fv(glGetUniformLocation(phongProgram, "cambient"), 1, &mat.cAmbient[0]);
-                glUniform4fv(glGetUniformLocation(phongProgram, "cdiffuse"), 1, &mat.cDiffuse[0]);
-                glUniform4fv(glGetUniformLocation(phongProgram, "cspecular"), 1, &mat.cSpecular[0]);
-                glUniform1f(glGetUniformLocation(phongProgram, "shininess"), shape.primitive.material.shininess);
-
-                PrimitiveType type = shape.primitive.type;
-                bindDraw(type);
             }
+            glUniform1i(glGetUniformLocation(phongProgram, "terrain"), terrain);
+            invTransposeModel = inverse(transpose(glm::mat3(ctm)));
+            glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &invTransposeModel[0][0]);
+            glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &ctm[0][0]);
+            glUniformMatrix4fv(glGetUniformLocation(phongProgram, "viewmat"), 1, GL_FALSE, &viewMat[0][0]);
+            glUniformMatrix4fv(glGetUniformLocation(phongProgram, "projmat"), 1, GL_FALSE, &projMat[0][0]);
+            glUniform1f(glGetUniformLocation(colorProgram, "sun"), 0.0);
+            SceneMaterial mat = shape.primitive.material;
+            glUniform4fv(glGetUniformLocation(phongProgram, "cambient"), 1, &mat.cAmbient[0]);
+            glUniform4fv(glGetUniformLocation(phongProgram, "cdiffuse"), 1, &mat.cDiffuse[0]);
+            glUniform4fv(glGetUniformLocation(phongProgram, "cspecular"), 1, &mat.cSpecular[0]);
+            glUniform1f(glGetUniformLocation(phongProgram, "shininess"), shape.primitive.material.shininess);
+
+            PrimitiveType type = shape.primitive.type;
+            bindDraw(type);
+
 
         }
 //        glUniform1i(glGetUniformLocation(phongProgram, "terrain"), 0);
