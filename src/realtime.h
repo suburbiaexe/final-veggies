@@ -199,5 +199,5 @@ private:
     int tomato_pupil1_size;
     int tomato_pupil2_size;
     int tomato_stem_size;
-    void drawTomato(glm::mat4 viewM, glm::mat4 projM);
+    void drawTomato(glm::mat4 viewM, glm::mat4 projM, glm::mat4 transformctm);
 };

@@ -561,7 +561,10 @@ void Realtime::paintGeometry(int pass) {
 
         }
         glUniform1i(glGetUniformLocation(phongProgram, "terrain"), 0);
-        drawTomato(viewMat, projMat);
+        glm::mat4 transformationMat = glm::translate(glm::vec3(0,-1,0))*glm::scale(glm::vec3(0.1,0.1,0.1));
+        drawTomato(viewMat, projMat, transformationMat);
+//        transformationMat = glm::translate(glm::vec3(0,1,0))*glm::rotate(180.f, glm::vec3(0,1,0))*glm::scale(glm::vec3(0.1,0.1,0.1));
+//        drawTomato(viewMat, projMat, transformationMat);
 
     }
     glBindVertexArray(0);

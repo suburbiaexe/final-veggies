@@ -118,7 +118,7 @@ void Realtime::bindDraw(PrimitiveType type) {
     }
 }
 
-void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
+void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM, glm::mat4 transformctm) {
     std::vector<glm::mat4> tomato_ctms = {glm::mat4(1.0f), glm::mat4(1.0f),
                                           glm::mat4(1.0f), glm::mat4(1.0f),
                                           glm::mat4(1.0f), glm::mat4(1.0f),
@@ -155,7 +155,7 @@ void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
                                      sqrtf(250), sqrtf(360),
                                      sqrtf(250)};
     for (int i =0; i < tomato_ctms.size(); i++) {
-        tomato_ctms[i] *= glm::scale(glm::vec3(0.25,0.25,0.25));
+        tomato_ctms[i] *= transformctm;
     }
 
     glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &glm::inverse(glm::transpose(glm::mat3(tomato_ctms[0])))[0][0]);
