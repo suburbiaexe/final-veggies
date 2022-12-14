@@ -589,18 +589,20 @@ void Realtime::paintGL() {
     glm::mat4 proj = cam.projMat;
     glm::mat4 view = glm::mat4(glm::mat3(cam.viewMat));
 
-//    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
-//    glDepthMask(GL_FALSE);
-//    glUseProgram(skyboxProgram);
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-//    glBindVertexArray(sky_vao);
+    if (settings.extraCredit1) {
+        glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+        glDepthMask(GL_FALSE);
+        glUseProgram(skyboxProgram);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+        glBindVertexArray(sky_vao);
 
-//    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
-//    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projmat"), 1, GL_FALSE, &proj[0][0]);
-//    glDrawArrays(GL_TRIANGLES, 0, 36);
+        glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
+        glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projmat"), 1, GL_FALSE, &proj[0][0]);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
-//    glDepthMask(GL_TRUE);
+        glDepthMask(GL_TRUE);
+    }
 
     // Render pass 1: render sun and occluding shapes to fbo texture
 
@@ -616,41 +618,44 @@ void Realtime::paintGL() {
     glViewport(0, 0, m_screen_width, m_screen_height);
     paintGeometry(0);
 
+
     // Render pass 3: render shapes with sun and add rays
+    if (settings.extraCredit4) {
+        //    glDisable(GL_DEPTH_TEST);
+            glDepthMask(GL_FALSE);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-////    glDisable(GL_DEPTH_TEST);
-//    glDepthMask(GL_FALSE);
-//    glEnable(GL_BLEND);
-//    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+            glViewport(0, 0, m_screen_width, m_screen_height);
 
-//    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
-//    glViewport(0, 0, m_screen_width, m_screen_height);
+            glUseProgram(postpassProgram);
 
-//    glUseProgram(postpassProgram);
+            glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0.0);
+            glm::vec4 sunPos = glm::vec4(0, 0, -40, 1.0);
+            sunPos = sunPos * view;
+            sunPos = sunPos * cam.projMat;
+        //    sunPos = sunPos * (1.f / sunPos[3]);
+            sunPos = sunPos + glm::vec4(1.0, 1.0, 0.0, 0.0);
+            sunPos = sunPos * 0.5f;
+            glm::vec2 sun = glm::vec2(sunPos[0], sunPos[1]);
 
-//    glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0.0);
-//    glm::vec4 sunPos = glm::vec4(0, 0, -40, 1.0);
-//    sunPos = sunPos * view;
-//    sunPos = sunPos * cam.projMat;
-////    sunPos = sunPos * (1.f / sunPos[3]);
-//    sunPos = sunPos + glm::vec4(1.0, 1.0, 0.0, 0.0);
-//    sunPos = sunPos * 0.5f;
-//    glm::vec2 sun = glm::vec2(sunPos[0], sunPos[1]);
+            glUniform2fv(glGetUniformLocation(postpassProgram, "sunPos"), 1, &sun[0]);
 
-//    glUniform2fv(glGetUniformLocation(postpassProgram, "sunPos"), 1, &sun[0]);
+            glBindVertexArray(m_fullscreen_vao);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
 
-//    glBindVertexArray(m_fullscreen_vao);
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
-//    glDrawArrays(GL_TRIANGLES, 0, 6);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0);
+            glUseProgram(0);
 
-//    glBindTexture(GL_TEXTURE_2D, 0);
-//    glBindVertexArray(0);
-//    glUseProgram(0);
+            glDisable(GL_BLEND);
+        //    glEnable(GL_DEPTH_TEST);
+            glDepthMask(GL_TRUE);
+    }
 
-//    glDisable(GL_BLEND);
-////    glEnable(GL_DEPTH_TEST);
-//    glDepthMask(GL_TRUE);
 
 }
 

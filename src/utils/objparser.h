@@ -8,14 +8,11 @@
 #include <sstream>
 #include <glm/glm.hpp>
 
-
-
 class objParser {
 public:
     std::vector<std::vector<float>> parse_tomato();
     std::vector<float> parse_cucumber();
     std::vector<std::vector<float>> vertexData;
-//    std::vector<std::string> materials;
 };
 
 /* Plan for importing tomato obj:

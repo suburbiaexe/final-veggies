@@ -156,7 +156,7 @@ void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
                                       sqrtf(722.5), sqrtf(250),
                                      sqrtf(250), sqrtf(360),
                                      sqrtf(250)};
-    std::cout << "before uniforms" <<std::endl;
+
     glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &glm::inverse(glm::transpose(glm::mat3(tomato_ctms[0])))[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &tomato_ctms[0][0][0]);
     glUniformMatrix4fv(glGetUniformLocation(phongProgram, "viewmat"), 1, GL_FALSE, &viewM[0][0]);
@@ -168,8 +168,6 @@ void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
     glBindVertexArray(tomato_material6_vao);
     glDrawArrays(GL_TRIANGLES, 0, tomato_material6_size / 6);
 
-    std::cout << "after uniform 1" <<std::endl;
-
     glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &glm::inverse(glm::transpose(glm::mat3(tomato_ctms[1])))[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &tomato_ctms[1][0][0]);
     glUniformMatrix4fv(glGetUniformLocation(phongProgram, "viewmat"), 1, GL_FALSE, &viewM[0][0]);
@@ -180,7 +178,6 @@ void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
     glUniform1f(glGetUniformLocation(phongProgram, "shininess"), shininesses[1]);
     glBindVertexArray(tomato_stem_vao);
     glDrawArrays(GL_TRIANGLES, 0, tomato_stem_size / 6);
-    std::cout << "after uniform 2" <<std::endl;
 
     glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &glm::inverse(glm::transpose(glm::mat3(tomato_ctms[2])))[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &tomato_ctms[2][0][0]);
@@ -192,7 +189,6 @@ void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
     glUniform1f(glGetUniformLocation(phongProgram, "shininess"), shininesses[2]);
     glBindVertexArray(tomato_material5_vao);
     glDrawArrays(GL_TRIANGLES, 0, tomato_material5_size / 6);
-    std::cout << "after uniform 3" <<std::endl;
 
     glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &glm::inverse(glm::transpose(glm::mat3(tomato_ctms[3])))[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &tomato_ctms[3][0][0]);
@@ -204,7 +200,6 @@ void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
     glUniform1f(glGetUniformLocation(phongProgram, "shininess"), shininesses[3]);
     glBindVertexArray(tomato_blue_eyelids_vao);
     glDrawArrays(GL_TRIANGLES, 0, tomato_blue_eyelids_size / 6);
-    std::cout << "after uniform 4" <<std::endl;
 
     glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &glm::inverse(glm::transpose(glm::mat3(tomato_ctms[4])))[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &tomato_ctms[4][0][0]);
@@ -216,7 +211,6 @@ void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
     glUniform1f(glGetUniformLocation(phongProgram, "shininess"), shininesses[4]);
     glBindVertexArray(tomato_blue_eyelids2_vao);
     glDrawArrays(GL_TRIANGLES, 0, tomato_blue_eyelids2_size / 6);
-    std::cout << "after uniform 5" <<std::endl;
 
     glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &glm::inverse(glm::transpose(glm::mat3(tomato_ctms[5])))[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &tomato_ctms[5][0][0]);
@@ -228,7 +222,6 @@ void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
     glUniform1f(glGetUniformLocation(phongProgram, "shininess"), shininesses[5]);
     glBindVertexArray(tomato_eye_vao);
     glDrawArrays(GL_TRIANGLES, 0, tomato_eye_size / 6);
-    std::cout << "after uniform 6" <<std::endl;
 
     glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &glm::inverse(glm::transpose(glm::mat3(tomato_ctms[6])))[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &tomato_ctms[6][0][0]);
@@ -240,7 +233,6 @@ void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
     glUniform1f(glGetUniformLocation(phongProgram, "shininess"), shininesses[6]);
     glBindVertexArray(tomato_pupil1_vao);
     glDrawArrays(GL_TRIANGLES, 0, tomato_pupil1_size / 6);
-    std::cout << "after uniform 7" <<std::endl;
 
     glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &glm::inverse(glm::transpose(glm::mat3(tomato_ctms[7])))[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &tomato_ctms[7][0][0]);
@@ -252,7 +244,6 @@ void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
     glUniform1f(glGetUniformLocation(phongProgram, "shininess"), shininesses[7]);
     glBindVertexArray(tomato_eye2_vao);
     glDrawArrays(GL_TRIANGLES, 0, tomato_eye2_size / 6);
-    std::cout << "after uniform 8" <<std::endl;
 
     glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &glm::inverse(glm::transpose(glm::mat3(tomato_ctms[8])))[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &tomato_ctms[8][0][0]);
@@ -264,7 +255,6 @@ void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
     glUniform1f(glGetUniformLocation(phongProgram, "shininess"), shininesses[8]);
     glBindVertexArray(tomato_pupil2_vao);
     glDrawArrays(GL_TRIANGLES, 0, tomato_pupil2_size / 6);
-    std::cout << "after uniform 9" <<std::endl;
 
     glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &glm::inverse(glm::transpose(glm::mat3(tomato_ctms[9])))[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &tomato_ctms[9][0][0]);
@@ -276,7 +266,6 @@ void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
     glUniform1f(glGetUniformLocation(phongProgram, "shininess"), shininesses[9]);
     glBindVertexArray(tomato_blue_eyelids3_vao);
     glDrawArrays(GL_TRIANGLES, 0, tomato_blue_eyelids3_size / 6);
-    std::cout << "after uniform 10" <<std::endl;
 
     glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &glm::inverse(glm::transpose(glm::mat3(tomato_ctms[10])))[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &tomato_ctms[10][0][0]);
@@ -288,7 +277,6 @@ void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
     glUniform1f(glGetUniformLocation(phongProgram, "shininess"), shininesses[10]);
     glBindVertexArray(tomato_blue_eyelids4_vao);
     glDrawArrays(GL_TRIANGLES, 0, tomato_blue_eyelids4_size / 6);
-    std::cout << "after uniform 11" <<std::endl;
 
     glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &glm::inverse(glm::transpose(glm::mat3(tomato_ctms[11])))[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &tomato_ctms[11][0][0]);
@@ -300,7 +288,6 @@ void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
     glUniform1f(glGetUniformLocation(phongProgram, "shininess"), shininesses[11]);
     glBindVertexArray(tomato_material4_vao);
     glDrawArrays(GL_TRIANGLES, 0, tomato_material4_size / 6);
-    std::cout << "after uniform 12" <<std::endl;
 
     glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &glm::inverse(glm::transpose(glm::mat3(tomato_ctms[12])))[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &tomato_ctms[12][0][0]);
@@ -312,6 +299,5 @@ void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
     glUniform1f(glGetUniformLocation(phongProgram, "shininess"), shininesses[12]);
     glBindVertexArray(tomato_material_vao);
     glDrawArrays(GL_TRIANGLES, 0, tomato_material_size / 6);
-    std::cout << "after uniform 13" <<std::endl;
 
 }
