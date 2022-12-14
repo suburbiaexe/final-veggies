@@ -201,7 +201,6 @@ void Realtime::initializeGL() {
 
     // texture
     std::string terrainpath = parentDir + "/final-veggies/resources/texture_mountain.jpg";
-//    std::string terrainpath = parentDir + "/final-veggies/resources/skybox/back.jpg";
     int x, y, n;
     int force_channels = 4;
     unsigned char*  image_data = stbi_load(terrainpath.c_str(), &x, &y, &n, force_channels);
@@ -218,11 +217,8 @@ void Realtime::initializeGL() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
-//    glUseProgram(phongProgram); // check this ???
     glUniform1i(glGetUniformLocation(phongProgram, "terrainSampler"), 0);
-//    glUseProgram(0);
     stbi_image_free(image_data);
-
 
     //TOMATO STUFF
     objParser objParse;
@@ -562,8 +558,8 @@ void Realtime::paintGeometry(int pass) {
 
 
         }
-//        glUniform1i(glGetUniformLocation(phongProgram, "terrain"), 0);
-//        drawTomato(viewMat, projMat);
+        glUniform1i(glGetUniformLocation(phongProgram, "terrain"), 0);
+        drawTomato(viewMat, projMat);
 
     }
     glBindVertexArray(0);
@@ -844,9 +840,9 @@ void Realtime::timerEvent(QTimerEvent *event) {
             }
 
             if (m_keyMap.at(Qt::Key_W)) {
-                float val0 = (float) -normalized[0] * deltaTime;
-                float val1 = (float) -normalized[1] * deltaTime;
-                float val2 = (float) -normalized[2] * deltaTime;
+                float val0 = (float) normalized[0] * deltaTime;
+                float val1 = (float) normalized[1] * deltaTime;
+                float val2 = (float) normalized[2] * deltaTime;
                 glm::mat4 translate = glm::mat4(1, 0, 0, 0,
                          0, 1, 0, 0,
                          0, 0, 1, 0,
@@ -854,9 +850,9 @@ void Realtime::timerEvent(QTimerEvent *event) {
                 cam.updateTranslation(translate);
             }
             if (m_keyMap.at(Qt::Key_S)) {
-                float val0 = (float) normalized[0] * deltaTime;
-                float val1 = (float) normalized[1] * deltaTime;
-                float val2 = (float) normalized[2] * deltaTime;
+                float val0 = (float) -normalized[0] * deltaTime;
+                float val1 = (float) -normalized[1] * deltaTime;
+                float val2 = (float) -normalized[2] * deltaTime;
                 glm::mat4 translate = glm::mat4(1, 0, 0, 0,
                          0, 1, 0 ,0,
                          0, 0, 1, 0,
@@ -864,9 +860,9 @@ void Realtime::timerEvent(QTimerEvent *event) {
                 cam.updateTranslation(translate);
             }
             if (m_keyMap.at(Qt::Key_A)) {
-                float val0 = (float) -left[0] * deltaTime;
-                float val1 = (float) -left[1] * deltaTime;
-                float val2 = (float) -left[2] * deltaTime;
+                float val0 = (float) left[0] * deltaTime;
+                float val1 = (float) left[1] * deltaTime;
+                float val2 = (float) left[2] * deltaTime;
                 glm::mat4 translate = glm::mat4(1, 0, 0, 0,
                          0, 1, 0 ,0,
                          0, 0, 1, 0,
@@ -874,9 +870,9 @@ void Realtime::timerEvent(QTimerEvent *event) {
                 cam.updateTranslation(translate);
             }
             if (m_keyMap.at(Qt::Key_D)) {
-                float val0 = (float) left[0] * deltaTime;
-                float val1 = (float) left[1] * deltaTime;
-                float val2 = (float) left[2] * deltaTime;
+                float val0 = (float) -left[0] * deltaTime;
+                float val1 = (float) -left[1] * deltaTime;
+                float val2 = (float) -left[2] * deltaTime;
                 glm::mat4 translate = glm::mat4(1, 0, 0, 0,
                          0, 1, 0 ,0,
                          0, 0, 1, 0,

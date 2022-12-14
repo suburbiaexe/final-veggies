@@ -1,4 +1,5 @@
 #include "realtime.h"
+#include "glm/gtx/transform.hpp"
 
 /**
  * @brief Realtime::initializeBuffers
@@ -85,13 +86,10 @@ void Realtime::bindVAO() {
         //Add attributes to your VAO here
         //Vertices
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*9, reinterpret_cast<void*>(0));
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*6, reinterpret_cast<void*>(0));
         //Normals
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*9, reinterpret_cast<void*>(3*sizeof(GLfloat)));
-        // Colors
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*9, reinterpret_cast<void*>(6*sizeof(GLfloat)));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*6, reinterpret_cast<void*>(3*sizeof(GLfloat)));
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
@@ -156,6 +154,9 @@ void Realtime::drawTomato(glm::mat4 viewM, glm::mat4 projM) {
                                       sqrtf(722.5), sqrtf(250),
                                      sqrtf(250), sqrtf(360),
                                      sqrtf(250)};
+    for (int i =0; i < tomato_ctms.size(); i++) {
+        tomato_ctms[i] *= glm::scale(glm::vec3(0.25,0.25,0.25));
+    }
 
     glUniformMatrix3fv(glGetUniformLocation(phongProgram, "invTransposeModel"), 1, GL_FALSE, &glm::inverse(glm::transpose(glm::mat3(tomato_ctms[0])))[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(phongProgram, "modelmat"), 1, GL_FALSE, &tomato_ctms[0][0][0]);
