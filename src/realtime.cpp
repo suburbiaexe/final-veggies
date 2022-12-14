@@ -573,7 +573,9 @@ void Realtime::paintGeometry(int pass) {
         }
         glUniform1i(glGetUniformLocation(phongProgram, "terrain"), 0);
 
+
         glm::mat4 transformationMat = glm::translate(glm::vec3(0,-1,0))*glm::scale(glm::vec3(0.15,0.15,0.15));
+
         drawTomato(viewMat, projMat, transformationMat);
 //        transformationMat = glm::translate(glm::vec3(0,1,0))*glm::rotate(180.f, glm::vec3(0,1,0))*glm::scale(glm::vec3(0.1,0.1,0.1));
 //        drawTomato(viewMat, projMat, transformationMat);
@@ -843,6 +845,7 @@ void Realtime::timerEvent(QTimerEvent *event) {
 
             bezFlag = false;
             bezT = 1;
+
             bezA = cam.cdata.pos;
             bezB = glm::vec4{ bezA[0] + 5, bezA[1] - 0.5, bezA[2] - 4, bezA[3] };
             bezC = glm::vec4{ bezA[0] - 5, bezA[1] - 0.8, bezA[2] - 8, bezA[3] };
