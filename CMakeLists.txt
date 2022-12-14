@@ -90,8 +90,6 @@ qt6_add_resources(${PROJECT_NAME} "Resources"
         resources/shaders/postpass.vert
         resources/shaders/skybox.frag
         resources/shaders/skybox.vert
-        resources/shaders/terrain.frag
-        resources/shaders/terrain.vert
         resources/texture_mountain.png
 )
 

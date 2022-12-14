@@ -6,6 +6,7 @@
 #include <iostream>
 #include "settings.h"
 #include "glm/gtx/transform.hpp"
+#include "utils/objparser.h"
 
 // added for skybox
 #include <filesystem>
@@ -85,32 +86,11 @@ void Realtime::initializeGL() {
     colorProgram = ShaderLoader::createShaderProgram(":/resources/shaders/default.vert", ":/resources/shaders/color.frag");
     postpassProgram = ShaderLoader::createShaderProgram(":/resources/shaders/postpass.vert", ":/resources/shaders/postpass.frag");
     skyboxProgram = ShaderLoader::createShaderProgram(":/resources/shaders/skybox.vert", ":/resources/shaders/skybox.frag");
-//    terrainProgram = ShaderLoader::createShaderProgram(":/resources/shaders/terrain.vert", ":/resources/shaders/terrain.frag");
 
     initializeBuffers();
     bindVBO();
     bindVAO();
     makeFBO();
-
-    // terrain
-//    glUniform1i(glGetUniformLocation(terrainProgram, "terrain"), 1);
-
-    // terrain
-//    QString kitten_filepath = QString(":/resources/terrain_filepath.png");
-//    terrainImage = QImage(kitten_filepath);
-//    terrainImage = terrainImage.convertToFormat(QImage::Format_RGBA8888).mirrored();
-//    glGenTextures(1, &terrainTexture);
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, terrainTexture);
-//    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-//                 terrainImage.width(), terrainImage.height(), 0,
-//                 GL_RGBA, GL_UNSIGNED_BYTE, terrainImage.bits());
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//    glBindTexture(GL_TEXTURE_2D, 0);
-//    glUseProgram(terrainProgram); // check this ???
-//    glUniform1i(glGetUniformLocation(terrainProgram, "terraintexture"), 0);
-//    glUseProgram(0);
 
     std::vector<GLfloat> fullscreen_quad_data =
     { //     POSITIONS    //
@@ -538,31 +518,6 @@ void Realtime::paintGeometry(int pass) {
             int terrain = 0;
             if (shape.primitive.type == PrimitiveType::PRIMITIVE_CONE) {
                 terrain = 1;
-//                glUseProgram(terrainProgram);
-//                invTransposeModel = inverse(transpose(glm::mat3(ctm)));
-//                glUniformMatrix3fv(glGetUniformLocation(terrainProgram, "invTransposeModel"), 1, GL_FALSE, &invTransposeModel[0][0]);
-//                glUniformMatrix4fv(glGetUniformLocation(terrainProgram, "modelmat"), 1, GL_FALSE, &ctm[0][0]);
-//                glUniformMatrix4fv(glGetUniformLocation(terrainProgram, "viewmat"), 1, GL_FALSE, &viewMat[0][0]);
-//                glUniformMatrix4fv(glGetUniformLocation(terrainProgram, "projmat"), 1, GL_FALSE, &projMat[0][0]);
-//                SceneMaterial mat = shape.primitive.material;
-//                PrimitiveType type = shape.primitive.type;
-//                bindDraw(type);
-//                glUseProgram(phongProgram);
-
-//                glUseProgram(terrainProgram);
-//                glBindVertexArray(terrain_vao);
-//                invTransposeModel = inverse(transpose(glm::mat3(ctm)));
-//                glUniformMatrix3fv(glGetUniformLocation(terrainProgram, "invTransposeModel"), 1, GL_FALSE, &invTransposeModel[0][0]);
-//                glUniformMatrix4fv(glGetUniformLocation(terrainProgram, "modelmat"), 1, GL_FALSE, &ctm[0][0]);
-//                glUniformMatrix4fv(glGetUniformLocation(terrainProgram, "viewmat"), 1, GL_FALSE, &viewMat[0][0]);
-//                glUniformMatrix4fv(glGetUniformLocation(terrainProgram, "projmat"), 1, GL_FALSE, &projMat[0][0]);
-//                SceneMaterial mat = shape.primitive.material;
-
-//                glBindTexture(GL_TEXTURE_2D, terrainTexture);
-//                glDrawArrays(GL_TRIANGLES, 0, 6);
-//                glBindVertexArray(0);
-//                glBindTexture(GL_TEXTURE_2D, 0);
-//                glUseProgram(phongProgram);
             }
             glUniform1i(glGetUniformLocation(phongProgram, "terrain"), terrain);
             invTransposeModel = inverse(transpose(glm::mat3(ctm)));

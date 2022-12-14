@@ -16,7 +16,6 @@
 #include "utils/shaderloader.h"
 #include "utils/sceneparser.h"
 #include "camera/camera.h"
-#include "utils/objparser.h"
 
 #include "shapes/cone.h"
 #include "shapes/cube.h"
@@ -64,7 +63,6 @@ private:
     GLuint colorProgram;
     GLuint postpassProgram;
     GLuint skyboxProgram;
-    GLuint terrainProgram;
 
     Camera cam;
     RenderData metaData;
@@ -146,8 +144,6 @@ private:
     // terrain
     GLuint terrain_vbo;
     GLuint terrain_vao;
-    GLuint terrainTexture;
-    QImage terrainImage;
 
     // bezier stuff
     glm::vec4 interp(glm::vec4 a, glm::vec4 b, float t);
