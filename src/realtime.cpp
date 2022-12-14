@@ -616,20 +616,20 @@ void Realtime::paintGL() {
     glm::mat4 proj = cam.projMat;
     glm::mat4 view = glm::mat4(glm::mat3(cam.viewMat));
 
-    if (settings.extraCredit1) {
-        glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
-        glDepthMask(GL_FALSE);
-        glUseProgram(skyboxProgram);
+//    if (settings.extraCredit1) {
+    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+    glDepthMask(GL_FALSE);
+    glUseProgram(skyboxProgram);
 //        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-        glBindVertexArray(sky_vao);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+    glBindVertexArray(sky_vao);
 
-        glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
-        glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projmat"), 1, GL_FALSE, &proj[0][0]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projmat"), 1, GL_FALSE, &proj[0][0]);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        glDepthMask(GL_TRUE);
-    }
+    glDepthMask(GL_TRUE);
+//    }
 
     // Render pass 1: render sun and occluding shapes to fbo texture
 
