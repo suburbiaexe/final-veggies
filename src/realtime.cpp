@@ -196,8 +196,6 @@ void Realtime::initializeGL() {
                     &cubemapTexture);
 
 
-
-
     //TOMATO STUFF
     objParser objParse;
 //    std::cout<<"before parse tomato" << std::endl;
@@ -622,7 +620,7 @@ void Realtime::paintGL() {
     // Render pass 3: render shapes with sun and add rays
     if (settings.extraCredit4) {
         //    glDisable(GL_DEPTH_TEST);
-            glDepthMask(GL_FALSE);
+//            glDepthMask(GL_FALSE);
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
@@ -647,14 +645,16 @@ void Realtime::paintGL() {
             glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
+    } //EXTRA CREDIT 4 NOW ENDS HERE
+
             glBindTexture(GL_TEXTURE_2D, 0);
             glBindVertexArray(0);
             glUseProgram(0);
 
             glDisable(GL_BLEND);
         //    glEnable(GL_DEPTH_TEST);
-            glDepthMask(GL_TRUE);
-    }
+//            glDepthMask(GL_TRUE);
+//    }  EXTRA CREDIT 4 USED TO END HERE
 
 
 }
