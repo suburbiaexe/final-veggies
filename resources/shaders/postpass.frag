@@ -2,7 +2,7 @@
 in vec3 uv;
 uniform sampler2D occlusiontexture;
 
-const float exposure = 0.3;
+const float exposure = 0.5;
 const float decay = 1.0;
 const float density  = 1.0;
 const float weight  = 0.01;

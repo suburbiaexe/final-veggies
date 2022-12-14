@@ -208,16 +208,7 @@ void Realtime::initializeGL() {
     if (!image_data) {
       fprintf(stderr, "ERROR: could not load %s\n", terrainpath.c_str());
     }
-
-//    std::string mountainpath = parentDir + "/final-veggies/resources/texture_rocky.jpg";
-//    int u, v, m;
-//    unsigned char* rocky_data = stbi_load(mountainpath.c_str(), &u, &v, &m, force_channels);
-//    if (!rocky_data) {
-//      fprintf(stderr, "ERROR: could not load %s\n", mountainpath.c_str());
-//    }
-
     glGenTextures(1, &terrainTexture);
-//    glActiveTexture(GL_TEXTURE0 + 0);
     glBindTexture(GL_TEXTURE_2D, terrainTexture);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
@@ -229,64 +220,13 @@ void Realtime::initializeGL() {
                  x, y, 0,
                  GL_RGBA, GL_UNSIGNED_BYTE, image_data);
 
-//    glBindTexture(GL_TEXTURE_2D, 0);
-
-//    glGenTextures(1, &rockyTexture);
-////    glActiveTexture(GL_TEXTURE0 + 1);
-//    glBindTexture(GL_TEXTURE_2D, rockyTexture);
-//    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-//                 u, v, 0,
-//                 GL_RGBA, GL_UNSIGNED_BYTE, rocky_data);
-
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glUseProgram(phongProgram);
     glUniform1i(glGetUniformLocation(phongProgram, "snowtexture"), 0);
-//    glUniform1i(glGetUniformLocation(phongProgram, "rocktexture"), 1);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     stbi_image_free(image_data);
-//    stbi_image_free(rocky_data);
-//    glActiveTexture(GL_TEXTURE0);
 
-
-    /*
-    GLuint textures[2];
-    glGenTextures(2, textures);
-
-    GLint texLoc = glGetUniformLocation(phongProgram, "textureSampler");
-    glUniform1i(texLoc, 1);
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textures[0]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                 x, y, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, image_data);
-
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glUniform1i(glGetUniformLocation(phongProgram, "snowtexture"), 0);
-
-    stbi_image_free(image_data);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, textures[1]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                 u, v, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, rocky_data);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glUniform1i(glGetUniformLocation(phongProgram, "rocktexture"), 0);
-
-    stbi_image_free(rocky_data);*/
 
     glUseProgram(0);
 
@@ -626,19 +566,14 @@ void Realtime::paintGeometry(int pass) {
 
             PrimitiveType type = shape.primitive.type;
             glActiveTexture(GL_TEXTURE0);
-//            glBindTexture(GL_TEXTURE_2D, rockyTexture);
-//            glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, terrainTexture);
             glUseProgram(phongProgram);
             bindDraw(type);
 
-
         }
         glUniform1i(glGetUniformLocation(phongProgram, "terrain"), 0);
 
-        //float h = terrain.getHeight(0.f, 0.f);
-
-        glm::mat4 transformationMat = glm::translate(glm::vec3(0,-1,0))*glm::scale(glm::vec3(0.1,0.1,0.1));
+        glm::mat4 transformationMat = glm::translate(glm::vec3(0,-1,0))*glm::scale(glm::vec3(0.15,0.15,0.15));
         drawTomato(viewMat, projMat, transformationMat);
 //        transformationMat = glm::translate(glm::vec3(0,1,0))*glm::rotate(180.f, glm::vec3(0,1,0))*glm::scale(glm::vec3(0.1,0.1,0.1));
 //        drawTomato(viewMat, projMat, transformationMat);
@@ -659,7 +594,6 @@ void Realtime::paintSun() {
     glm::mat4 ctm = glm::mat4(1.0f);
 
     glm::mat4 proj = cam.projMat;
-//    glm::mat4 view = cam.viewMat;
     glm::mat4 view = glm::mat4(glm::mat3(cam.viewMat));
 
     glUniformMatrix4fv(glGetUniformLocation(colorProgram, "viewmat"), 1, GL_FALSE, &view[0][0]);
@@ -693,11 +627,9 @@ void Realtime::paintGL() {
     glm::mat4 proj = cam.projMat;
     glm::mat4 view = glm::mat4(glm::mat3(cam.viewMat));
 
-//    if (settings.extraCredit1) {
     glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
     glDepthMask(GL_FALSE);
     glUseProgram(skyboxProgram);
-//        glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
     glBindVertexArray(sky_vao);
 
@@ -706,7 +638,6 @@ void Realtime::paintGL() {
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     glDepthMask(GL_TRUE);
-//    }
 
     // Render pass 1: render sun and occluding shapes to fbo texture
 
@@ -726,42 +657,37 @@ void Realtime::paintGL() {
     // Render pass 3: render shapes with sun and add rays
         //    glDisable(GL_DEPTH_TEST);
 //            glDepthMask(GL_FALSE);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
-        glViewport(0, 0, m_screen_width, m_screen_height);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+    glViewport(0, 0, m_screen_width, m_screen_height);
 
-        glUseProgram(postpassProgram);
+    glUseProgram(postpassProgram);
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
+//    glActiveTexture(GL_TEXTURE0);
+//    glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
 
-//        glUniform1f(glGetUniformLocation(postpassProgram, "occlusiontexture"), 0.0);
-        glm::vec4 sunPos = glm::vec4(0, 0, -40, 1.0);
-        sunPos = sunPos * view;
-        sunPos = sunPos * cam.projMat;
-    //    sunPos = sunPos * (1.f / sunPos[3]);
-        sunPos = sunPos + glm::vec4(1.0, 1.0, 0.0, 0.0);
-        sunPos = sunPos * 0.5f;
-        glm::vec2 sun = glm::vec2(sunPos[0], sunPos[1]);
+    glm::vec4 sunPos = glm::vec4(0, 0, -40, 1.0);
+    sunPos = sunPos * view;
+    sunPos = sunPos * cam.projMat;
+    sunPos = sunPos + glm::vec4(1.0, 1.0, 0.0, 0.0);
+    sunPos = sunPos * 0.5f;
+    glm::vec2 sun = glm::vec2(sunPos[0], sunPos[1]);
 
-        glUniform2fv(glGetUniformLocation(postpassProgram, "sunPos"), 1, &sun[0]);
+    glUniform2fv(glGetUniformLocation(postpassProgram, "sunPos"), 1, &sun[0]);
 
-        glBindVertexArray(m_fullscreen_vao);
-//            glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(m_fullscreen_vao);
+    glBindTexture(GL_TEXTURE_2D, m_fbo_texture);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 
 
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glBindVertexArray(0);
-        glUseProgram(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindVertexArray(0);
+    glUseProgram(0);
 
-        glDisable(GL_BLEND);
-        //    glEnable(GL_DEPTH_TEST);
-//            glDepthMask(GL_TRUE);
-//    }  EXTRA CREDIT 4 USED TO END HERE
+    glDisable(GL_BLEND);
+
 
 
 }
@@ -799,9 +725,9 @@ void Realtime::sceneChanged() {
     initialProj = cam.projMat;
 
     bezA = cam.cdata.pos;
-    bezB = glm::vec4{ bezA[0] + 5, bezA[1], bezA[2] + 5, bezA[3] };
-    bezC = glm::vec4{ bezA[0] + 5, bezA[1], bezA[2] - 5, bezA[3] };
-    bezD = glm::vec4{ bezA[0] + 10, bezA[1], bezA[2] - 4, bezA[3] };
+    bezB = glm::vec4{ bezA[0] - 5, bezA[1] + 0.5, bezA[2] + 4, bezA[3] };
+    bezC = glm::vec4{ bezA[0] + 5, bezA[1] + 0.5, bezA[2] + 8, bezA[3] };
+    bezD = glm::vec4{ bezA[0], bezA[1] + 1, bezA[2] + 10, bezA[3] };
     bezFlag = false;
     bezT = 1;
 
@@ -915,6 +841,11 @@ void Realtime::timerEvent(QTimerEvent *event) {
 
             bezFlag = false;
             bezT = 1;
+            bezA = cam.cdata.pos;
+            bezB = glm::vec4{ bezA[0] + 5, bezA[1] - 0.5, bezA[2] - 4, bezA[3] };
+            bezC = glm::vec4{ bezA[0] - 5, bezA[1] - 0.8, bezA[2] - 8, bezA[3] };
+            bezD = glm::vec4{ bezA[0] + 10, bezA[1] - 1, bezA[2] - 12, bezA[3] };
+
         } else if (bezFlag) {
             run_bezier();
         } else {
