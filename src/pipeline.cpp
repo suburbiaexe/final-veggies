@@ -85,11 +85,13 @@ void Realtime::bindVAO() {
         //Add attributes to your VAO here
         //Vertices
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*6, reinterpret_cast<void*>(0));
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*9, reinterpret_cast<void*>(0));
         //Normals
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*6, reinterpret_cast<void*>(3*sizeof(GLfloat)));
-
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*9, reinterpret_cast<void*>(3*sizeof(GLfloat)));
+        // Colors
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*9, reinterpret_cast<void*>(6*sizeof(GLfloat)));
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
